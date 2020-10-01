@@ -12,7 +12,7 @@ const PDFViewer: React.FC<InputProps> = props => {
     useEffect(() => {
         viewer(
             {
-                path: "/lib",
+                path: "/resources/lib",
                 initialDoc: "https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf"
             },
             viewerRef.current as HTMLDivElement
