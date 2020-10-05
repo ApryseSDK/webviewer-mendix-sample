@@ -1,5 +1,5 @@
-import { createElement, useRef, useEffect } from "react";
-import viewer from "@pdftron/webviewer";
+import { createElement, useRef, useEffect, useState } from "react";
+import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 
 export interface InputProps {
     value: string;
@@ -7,7 +7,7 @@ export interface InputProps {
 
 const PDFViewer: React.FC<InputProps> = props => {
     const viewerRef = useRef<HTMLDivElement>(null);
-    console.log(props);
+    const [instance, setInstance] = useState<null | WebViewerInstance>(null);
 
     useEffect(() => {
         viewer(
@@ -17,9 +17,15 @@ const PDFViewer: React.FC<InputProps> = props => {
             },
             viewerRef.current as HTMLDivElement
         ).then(instance => {
-            console.log(instance);
+            setInstance(instance);
         });
     }, []);
+
+    useEffect(() => {
+        if (instance && props.value !== "") {
+            instance.loadDocument(props.value);
+        }
+    }, [props.value]);
 
     return <div className="webviewer" ref={viewerRef}></div>;
 };
