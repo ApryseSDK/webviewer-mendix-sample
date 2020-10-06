@@ -52,7 +52,7 @@ Next, we must copy the static assets required for WebViewer to run. The files ar
 
 11. You can now run the app by clicking `Run Locally` at the top.
 
-## Connect Attribute to the WebViewer
+## Connect Attribute to WebViewer
 
 The WebViewer now loads inside of your page with the default file. Now let's connect the Attribute parameter to be accessible by the WebViewer. Attribute parameter can be used to pass a URL to open specific document.
 
