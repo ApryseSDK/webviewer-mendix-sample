@@ -4,7 +4,7 @@
 
 ![WebViewer UI](https://www.pdftron.com/downloads/pl/webviewer-ui.png)
 
-This repo is specifically designed for any users interested in integrating WebViewer into Mendix low-code app. You can watch [a video here](https://youtu.be/bVhWXuLSL0k) to help you get started.
+This repo is specifically designed for any users interested in integrating WebViewer into Mendix low-code app. You can watch [a video here](https://youtu.be/a9HNVzbmDLM) to help you get started.
 
 ## Initial setup
 
