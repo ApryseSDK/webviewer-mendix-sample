@@ -82,11 +82,11 @@ The WebViewer now loads inside of your page with the default file. Now let's con
 2. Open WebViewer component available in `src/components/PDFViewer.tsx`. Inside of it, you can see WebViewer constructor where you can pass various customization options and call APIs on the instance object. The Attribute that you have created in previous steps is passed in `props.value`:
 
 ```javascript
-    useEffect(() => {
-        if (instance && props.value !== "") {
-            instance.loadDocument(props.value);
-        }
-    }, [props.value]);
+useEffect(() => {
+    if (instance && props.value !== "") {
+        instance.loadDocument(props.value);
+    }
+}, [props.value]);
 ```
 
 In the code snippet, we are listening for any of the changes in `props` and then calling `loadDocument` API to load a new document. You can connect it with your existing flows or pass URLs from your file storage. Make sure you have the [CORS configured](https://www.pdftron.com/documentation/web/faq/cors-support/) in case you run into any errors.
