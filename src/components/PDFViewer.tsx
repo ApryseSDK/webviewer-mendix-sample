@@ -1,5 +1,8 @@
 import { createElement, useRef, useEffect, useState } from "react";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
+// @ts-ignore
+import { initialize3dViewer } from "@pdftron/webviewer-3d";
+
 
 export interface InputProps {
     value: string;
@@ -12,12 +15,18 @@ const PDFViewer: React.FC<InputProps> = props => {
     useEffect(() => {
         viewer(
             {
-                path: "/resources/lib",
-                initialDoc: "https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf"
+                path: "/resources/lib"
             },
             viewerRef.current as HTMLDivElement
-        ).then(instance => {
+        ).then(async instance => {
+            instance.setTheme("dark");
             setInstance(instance);
+            
+            const license = `---- Insert commercial license key here after purchase ----`;
+
+            const { loadModel } = await initialize3dViewer(instance, { license });
+            loadModel('/car/scene.gltf');
+            
         });
     }, []);
 
