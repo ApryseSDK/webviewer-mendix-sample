@@ -45,8 +45,14 @@ Next, we must copy the static assets required for WebViewer to run. The files ar
 /path/to/your/mendix/app/theme/resources
 └───lib
     ├───core
-    ├───ui
-    └───ui-legacy
+    └───ui
+```
+Beginning with Mendix 9, the `theme/resources` path is no longer valid. As such, please move the resources to respective folders for `web` and `mobile`. For example, for `web` it will look like this:
+```
+/path/to/your/mendix/app/theme/web/resources
+└───lib
+    ├───core
+    └───ui
 ```
 
 ## Place WebViewer into a Page
