@@ -22,14 +22,14 @@
   },
   "license": "",
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^8.14.0",
-    "@types/big.js": "^4.0.5",
+    "@mendix/pluggable-widgets-tools": "^9.13.2",
+    "@types/big.js": "^6.1.4",
     "@types/classnames": "^2.2.4",
-    "@types/react": "~16.9.0",
-    "@types/react-dom": "~16.9.0"
+    "@types/react": "~18.0.14",
+    "@types/react-dom": "~18.0.5"
   },
   "dependencies": {
-    "@pdftron/webviewer": "^7.1.0",
+    "@pdftron/webviewer": "^8.6.1",
     "classnames": "^2.2.6"
   }
 }
