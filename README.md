@@ -4,23 +4,23 @@
 
 ![WebViewer UI](https://www.pdftron.com/downloads/pl/webviewer-ui.png)
 
-This repo is specifically designed for any users interested in integrating WebViewer into Mendix low-code app. You can watch [a video here](https://youtu.be/a9HNVzbmDLM) to help you get started.
+This repo is specifically designed for any users interested in customizing and integrating WebViewer into Mendix low-code app. You can watch [a video here](https://youtu.be/a9HNVzbmDLM) to help you get started.
 
 ## Initial setup
 
-Before you begin, make sure your development environment includes [Node.js](https://nodejs.org/en/).
+Before you begin, make sure you have installed [Node.js](https://nodejs.org/en/) in your development environment.
 
-## Create a new or use an existing Mendix App
+## Create a new Mendix App or use an existing app
 
 Open [Mendix Studio Pro](https://docs.mendix.com/howto/general/install) and create a new project by selecting `File > New Project` from the top menu bar, and choose the `Blank` app.
 
-After creating a new app, or inside of the existing app navigate to the app's directory and create a new folder called `CustomWidgets/webViewer` and place the extracted contents from [WebViewer Mendix Web Widget](https://github.com/PDFTron/webviewer-mendix-sample).
+After creating a new app or inside of the existing app, navigate to the root directory and create a new folder called `CustomWidgets/WebViewer` and place the extracted contents from [this sample](https://github.com/PDFTron/webviewer-mendix-sample) inside.
 
 By default, Mendix projects are stored in:
 ```
 C:\Users\$your_username\Documents\Mendix\
 ```
-In terminal or command line navigate to `CustomWidgets/webViewer` and run:
+In the terminal or command line, navigate to `CustomWidgets/WebViewer` and run:
 ```
 npm install
 ```
@@ -29,17 +29,26 @@ After the command completes, run:
 ```
 npm run dev
 ```
-This will make a build of the Mendix Web Widget with the latest version of WebViewer, and it will be complete when you see something like this in your terminal:
+This will contiuously make a build of the Mendix Web Widget with WebViewer as the code changes and copy it into the app widget folder. It will be complete when you see something like this in your terminal:
+
 ```
-[08:57:07] Finished 'bound runWebpack' after 4.09 s
-[08:57:07] Starting 'createMpkFile'...
-[08:57:07] Finished 'createMpkFile' after 32 ms
-[08:57:07] Starting 'copyToDeployment'...
-Files generated in dist and ..\..\ folder
-[08:57:07] Finished 'copyToDeployment' after 18 ms
+bundles C:\Users\$your_username\Documents\Mendix\MyApp\CustomWidget\WebViewer\src\WebViewer.tsx → dist/tmp/widgets/pdftron/webviewer/WebViewer.js...
+LiveReload enabled
+created dist/tmp/widgets/pdftron/webviewer/WebViewer.js in 37.1s
+bundles C:\Users\$your_username\Documents\Mendix\MyApp\CustomWidget\WebViewer\src\WebViewer.tsx → dist/tmp/widgets/pdftron/webviewer/WebViewer.mjs...
+LiveReload enabled on port 35730
+created dist/tmp/widgets/pdftron/webviewer/WebViewer.mjs in 2s
+bundles C:\Users\$your_username\Documents\Mendix\MyApp\CustomWidget\WebViewer\src\WebViewer.editorPreview.tsx → dist/tmp/widgets/WebViewer.editorPreview.js...
+created dist/tmp/widgets/WebViewer.editorPreview.js in 1.3s
+
+[2022-07-05 13:23:22] waiting for changes...
 ```
 
-Next, we must copy the static assets required for WebViewer to run. The files are located in `CustomWidgets/webViewer/node_modules/@pdftron/webviewer/public` and must be moved into a location that will be served and publicly accessible. In Mendix, we can place it into `theme/resources`. Create a new folder called `lib` and place the contents from `node_modules/@pdftron/webviewer/public` there.
+Next, we must copy the static `lib` assets required for WebViewer to run. The files are located in `CustomWidgets/WebViewer/node_modules/@pdftron/webviewer/public` and must be moved into a location that will be served and publicly accessible.
+
+### Prior to Mendix 9
+
+We can place it into `theme/resources`. Create a new folder called `lib` and place the contents from `node_modules/@pdftron/webviewer/public` there.
 `theme/resources` should have a directory structure like so:
 ```
 /path/to/your/mendix/app/theme/resources
@@ -47,6 +56,9 @@ Next, we must copy the static assets required for WebViewer to run. The files ar
     ├───core
     └───ui
 ```
+
+### Mendix 9 or higher
+
 Beginning with Mendix 9, the `theme/resources` path is no longer valid. As such, please move the resources to respective folders for `web` and `mobile`. For example, for `web` it will look like this:
 ```
 /path/to/your/mendix/app/theme/web/resources
@@ -57,35 +69,57 @@ Beginning with Mendix 9, the `theme/resources` path is no longer valid. As such,
 
 ## Place WebViewer into a Page
 
-1. Access the `Domain Model` of the module where the viewer will be integrated, and create a new `Entity`.
+In your Mendix toolbox, you should see the `WebViewer` widget near the very bottom.
 
-2. Right-click the newly created `Entity`, click `Add > Attribute`. Leave everything as is, and ensure its `Type` is set to `String`.
+1. Click and drag the widget on to your page. You can bind to an entity if you wish. More details in the next section.
 
-3. Next, open the page inside of your module.
+2. Run your Mendix app and you should see WebViewer loaded on the page that you added it on. By default, it will have loaded a default document.
 
-4. Add a `Data view` widget by dragging it from the Toolbox. If you do not have a the `Toolbox` window open on the right, the bottom right corner of the window should have the `Toolbox` tab as an option. Double-click the widget, and give it a data source microflow by selecting `Data source > Type > Microflow`.
-
-5. In the microflow field, click the `Select` button and press `New`.
-
-6. Open newly created microflow, delete the `parameter` object (the object that has has `U` and `(Not set)` underneath) and drag `Create object` from the toolbox onto the arrow. Open the object by double-clicking on it and select the entity we created earlier.
-
-7. Right-click the `Create Entity` activity, then click `Set $NewEntity as Return Value`.
-
-8. Go back to the page you placed the `data view`, and drag `Text box` into `data view`. Open the textbox's properties, find the `Data source` panel, and change the `Attribute` (path) to the string attribute you created in Steps 1 and 2.
-
-9. Press F4, or from the top menu bar select `Project > Synchronize Project Directory`.
-
-10. Go back to the page you placed the `data view`, in the `Toolbar`, under `Add-on widgets` you should now see `Web Viewer`. Drag into the `data view`. Right-click on `Web Viewer` widget and select Attribute by selecting Attribute string you have created.
-
-11. You can now run the app by clicking `Run Locally` at the top.
+3. Right click the widget and access the properties. You can change the loaded document using the URL property. This is useful for single document viewing purposes.
 
 ## Connect Attribute to WebViewer
 
-The WebViewer now loads inside of your page with the default file. Now let's connect the Attribute parameter to be accessible by the WebViewer. Attribute parameter can be used to pass a URL to open specific document.
+We can bind WebViewer to an attribute to dynamically change documents. In the following example, we will add widgets to allow users to provide a document URL which make WebViewer load the new document.
+
+1. Access the `Domain Model` of the module where the viewer will be integrated, and create a new `Entity`. This entity will contain the file URL that we will load from. You can name it whatever you want.
+
+2. Right-click the newly created `Entity`, click `Add > Attribute`. You can name it whatever you want but ensure its `Type` is set to `String`.
+
+3. Next, open the page inside of your module.
+
+4. Add a `Data View` widget to the page by dragging it from the Toolbox.
+
+5. Double-click the widget, and give it a data source microflow by selecting `Data source > Type > Microflow`. This will create the entity when we change the URL.
+
+6. In the microflow field, click the `Select` button and press `New` to create a new microflow. You can name it whatever you want.
+
+7. Open the created microflow and drag `Create object` from the toolbox onto the microflow flow line. If there is a parameter object (the object that has `U` and `(Not set)` underneath), delete it.
+
+8. Open `Create object` by double-clicking on it and select the entity we created earlier.
+
+9. Right-click the `Create Entity` activity, then click `Set $NewEntity as Return Value`.
+
+10. Go back to the page where you placed the `Data View`, and drag a `Text box` into `Data View` for the user to enter a URL.
+
+11. Open the textbox's properties and find the `Data Source` panel.
+
+12. Change the `Attribute` to the string attribute you created in Steps 1 and 2. This will set the attribute when it is changed in the text box.
+
+13. Press F4 or from the top menu bar select `Project > Synchronize Project Directory` to synchronize with the local file changes.
+
+14. Return to the page you placed the `Data View`. In the Toolbox, under `Add-ons`, you should now see `WebViewer`.
+
+15. Drag the `WebViewer` widget into the `Data View`.
+
+16. Right-click on the `WebViewer` widget and set the `Attribute` property to the attribute created on your entity. Make sure to clear the URL property as well as that will load first. This will pass the attribute value to WebViewer.
+
+17. You can now run the app by clicking `Run Locally` at the top.
+
+WebViewer can now load the URL that is passed through the text box! How odes it work on the WebViewer side?
 
 1. Navigate to the WebViewer location inside of `App/CustomWidgets/webViewer` and open it in your favourite code editor.
 
-2. Open WebViewer component available in `src/components/PDFViewer.tsx`. Inside of it, you can see WebViewer constructor where you can pass various customization options and call APIs on the instance object. The Attribute that you have created in previous steps is passed in `props.value`:
+2. Open WebViewer component available in `src/components/PDFViewer.tsx`. Inside of it, you can see WebViewer constructor where you can pass various customization options and call APIs on the instance object. The Attribute that you have created in previous steps is passed in `props.file`:
 
 ```javascript
 useEffect(() => {
