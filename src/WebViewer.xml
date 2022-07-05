@@ -3,17 +3,27 @@
         supportedPlatform="Web"
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
-    <name>Web Viewer</name>
+    <name>WebViewer</name>
     <description>My widget description</description>
     <icon/>
     <properties>
-        <propertyGroup caption="General">
-             <property key="textAttribute" type="attribute">
-                <caption>Attribute (path)</caption>
-                <description/>
+        <propertyGroup caption="File">
+            <property key="fileUrl" type="string" required="false" defaultValue="https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf">
+                <caption>URL</caption>
+                <description>Manually specify a URL to load from.</description>
+            </property>
+             <property key="fileAttributeUrl" type="attribute" required="false">
+                <caption>Attribute (URL)</caption>
+                <description>Load a file from an entity attribute.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="License">
+            <property key="l" type="string" required="false">
+                <caption>Key</caption>
+                <description>WebViewer license key. Please reach out to sales@pdftron.com for more information.</description>
             </property>
         </propertyGroup>
     </properties>

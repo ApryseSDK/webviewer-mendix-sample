@@ -10,12 +10,18 @@ export interface WebViewerContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
-    tabIndex: number;
-    textAttribute: EditableValue<string>;
+    tabIndex?: number;
+    fileUrl: string;
+    fileAttributeUrl?: EditableValue<string>;
+    l: string;
 }
 
 export interface WebViewerPreviewProps {
-    class: string;
+    className: string;
     style: string;
-    textAttribute: string;
+    styleObject?: CSSProperties;
+    readOnly: boolean;
+    fileUrl: string;
+    fileAttributeUrl: string;
+    l: string;
 }
