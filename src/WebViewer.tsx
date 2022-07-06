@@ -8,7 +8,7 @@ import "./ui/WebViewer.css";
 export default class WebViewer extends Component<WebViewerContainerProps> {
     render(): ReactNode {
         const viewerProps = {
-            file: this.props.fileUrl || this.props.fileAttributeUrl?.value,
+            file: this.props.fileAttributeUrl?.value || this.props.fileUrl,
             l: this.props.l
         };
         return <PDFViewer {...viewerProps} />;

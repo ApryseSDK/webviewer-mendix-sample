@@ -111,11 +111,11 @@ We can bind WebViewer to an attribute to dynamically change documents. In the fo
 
 15. Drag the `WebViewer` widget into the `Data View`.
 
-16. Right-click on the `WebViewer` widget and set the `Attribute` property to the attribute created on your entity. Make sure to clear the URL property as well as that will load first. This will pass the attribute value to WebViewer.
+16. Right-click on the `WebViewer` widget and set the `Attribute` property to the attribute created on your entity.
 
 17. You can now run the app by clicking `Run Locally` at the top.
 
-WebViewer can now load the URL that is passed through the text box! How odes it work on the WebViewer side?
+WebViewer can now load the URL that is passed through the text box! When the URL and Attribute are used, **Attribute** takes priority. How does it work on the WebViewer side?
 
 1. Navigate to the WebViewer location inside of `App/CustomWidgets/webViewer` and open it in your favourite code editor.
 
