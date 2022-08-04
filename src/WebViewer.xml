@@ -12,12 +12,94 @@
                 <caption>URL</caption>
                 <description>Manually specify a URL to load from.</description>
             </property>
-             <property key="fileAttributeUrl" type="attribute" required="false">
+            <property key="fileAttributeUrl" type="attribute" required="false">
                 <caption>Attribute (URL)</caption>
                 <description>Load a file from an entity attribute.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
+            </property>
+            <property key="enableFilePicker" type="boolean" defaultValue="false">
+                <caption>Show file picker</caption>
+                <description>Allow users to load their own local files.</description>
+            </property>
+            <property key="loadAsPDF" type="boolean" defaultValue="false">
+                <caption>Load as PDF</caption>
+                <description>Converts the loaded document to PDF after loading.</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Annotations">
+            <propertyGroup caption="User">
+                <property key="annotationUser" type="attribute" required="false">
+                    <caption>User</caption>
+                    <description>Name of the user for annotations. Default is 'Guest'.</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Options">
+                <property key="enableAnnotations" type="boolean" defaultValue="true">
+                    <caption>Enable annotations</caption>
+                    <description>Enable annotating documents.</description>
+                </property>
+                <property key="enableMeasurement" type="boolean" defaultValue="false">
+                    <caption>Enable measurement</caption>
+                    <description>Enable measurement tools.</description>
+                </property>
+                <property key="selectAnnotationOnCreation" type="boolean" defaultValue="false">
+                    <caption>Select on creation</caption>
+                    <description>Automatically select annotations when they are created.</description>
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="UI">
+            <property key="enableDarkMode" type="boolean" defaultValue="false">
+                <caption>Enable dark mode</caption>
+                <description>Changes to the dark theme.</description>
+            </property>
+            <property key="defaultLanguage" type="enumeration" defaultValue="en">
+                <caption>Default language</caption>
+                <description></description>
+                <enumerationValues>
+                    <enumerationValue key="en">English</enumerationValue>
+                    <enumerationValue key="de">German</enumerationValue>
+                    <enumerationValue key="es">Spanish</enumerationValue>
+                    <enumerationValue key="fr">French</enumerationValue>
+                    <enumerationValue key="it">Italian</enumerationValue>
+                    <enumerationValue key="ja">Japanese</enumerationValue>
+                    <enumerationValue key="ko">Korean</enumerationValue>
+                    <enumerationValue key="nl">Dutch</enumerationValue>
+                    <enumerationValue key="pt_br">Portugeuse</enumerationValue>
+                    <enumerationValue key="ru">Russian</enumerationValue>
+                    <enumerationValue key="zh_cn">Chinese Simplified</enumerationValue>
+                    <enumerationValue key="zh_tw">Chinese Traditional</enumerationValue>
+                    <enumerationValue key="vi">Vietmese</enumerationValue>
+                    <enumerationValue key="uk">Ukrainian</enumerationValue>
+                    <enumerationValue key="id">Indonesian</enumerationValue>
+                    <enumerationValue key="ms">Malaysian</enumerationValue>
+                    <enumerationValue key="bn">Bengali</enumerationValue>
+                    <enumerationValue key="hi">Hindi</enumerationValue>
+                    <enumerationValue key="tr">Turkish</enumerationValue>
+                </enumerationValues>
+            </property>
+            <property key="notesInLeftPanel" type="boolean" defaultValue="false">
+                <caption>Notes in left panel</caption>
+                <description>Moves the notes panel from the right to the left.</description>
+            </property>
+            <property key="customCss" type="string" required="false">
+                <caption>Custom CSS</caption>
+                <description>Provide a path to your own CSS to customize styling.</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Accessibility">
+            <property key="accessibleMode" type="boolean" defaultValue="false">
+                <caption>Enable accessibility mode</caption>
+                <description>Enable accessibility features. E.g tab page selection and page text in the DOM.</description>
+            </property>
+            <property key="highContrastMode" type="boolean" defaultValue="false">
+                <caption>Enable high contrast mode</caption>
+                <description>Enable high contrast colors to help with accessibility.</description>
             </property>
         </propertyGroup>
         <propertyGroup caption="License">

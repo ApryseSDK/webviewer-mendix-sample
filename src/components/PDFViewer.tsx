@@ -3,6 +3,18 @@ import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 
 export interface InputProps {
     file?: string;
+    enableFilePicker?: boolean;
+    annotationUser?: string;
+    accessibleMode?: boolean;
+    enableMeasurement?: boolean;
+    enableAnnotations?: boolean;
+    loadAsPDF?: boolean;
+    highContrastMode?: boolean;
+    notesInLeftPanel?: boolean;
+    selectAnnotationOnCreation?: boolean;
+    enableDarkMode?: boolean;
+    customCss?: string;
+    defaultLanguage: string;
     l?: string;
 }
 
@@ -14,11 +26,27 @@ const PDFViewer: React.FC<InputProps> = props => {
         viewer(
             {
                 path: "/resources/lib",
+                enableFilePicker: props.enableFilePicker,
+                annotationUser: props.annotationUser,
+                accessibleMode: props.accessibleMode,
+                enableMeasurement: props.enableMeasurement,
+                enableAnnotations: props.enableAnnotations,
+                loadAsPDF: props.loadAsPDF,
+                highContrastMode: props.highContrastMode,
+                notesInLeftPanel: props.notesInLeftPanel,
+                selectAnnotationOnCreation: props.selectAnnotationOnCreation,
+                css: props.customCss,
                 licenseKey: props.l
             },
             viewerRef.current as HTMLDivElement
         ).then(instance => {
             const { UI } = instance;
+
+            if (props.enableDarkMode) {
+                UI.setTheme('dark');
+            }
+
+            UI.setLanguage(props.defaultLanguage);
 
             setInstance(instance);
 

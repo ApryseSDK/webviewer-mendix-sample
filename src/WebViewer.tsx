@@ -9,6 +9,18 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
     render(): ReactNode {
         const viewerProps = {
             file: this.props.fileAttributeUrl?.value || this.props.fileUrl,
+            enableFilePicker: this.props.enableFilePicker,
+            annotationUser: this.props.annotationUser?.value,
+            accessibleMode: this.props.accessibleMode,
+            enableMeasurement: this.props.enableMeasurement,
+            enableAnnotations: this.props.enableAnnotations,
+            loadAsPDF: this.props.loadAsPDF,
+            highContrastMode: this.props.highContrastMode,
+            notesInLeftPanel: this.props.notesInLeftPanel,
+            selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
+            enableDarkMode: this.props.enableDarkMode,
+            customCss: this.props.customCss,
+            defaultLanguage: this.props.defaultLanguage,
             l: this.props.l
         };
         return <PDFViewer {...viewerProps} />;
