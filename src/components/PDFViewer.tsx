@@ -7,12 +7,14 @@ export interface InputProps {
     annotationUser?: string;
     accessibleMode?: boolean;
     enableMeasurement?: boolean;
+    enableRedaction?: boolean;
     enableAnnotations?: boolean;
     loadAsPDF?: boolean;
     highContrastMode?: boolean;
     notesInLeftPanel?: boolean;
     selectAnnotationOnCreation?: boolean;
     enableDarkMode?: boolean;
+    enableFullAPI?: boolean;
     customCss?: string;
     defaultLanguage: string;
     l?: string;
@@ -30,11 +32,13 @@ const PDFViewer: React.FC<InputProps> = props => {
                 annotationUser: props.annotationUser,
                 accessibleMode: props.accessibleMode,
                 enableMeasurement: props.enableMeasurement,
+                enableRedaction: props.enableRedaction,
                 enableAnnotations: props.enableAnnotations,
                 loadAsPDF: props.loadAsPDF,
                 highContrastMode: props.highContrastMode,
                 notesInLeftPanel: props.notesInLeftPanel,
                 selectAnnotationOnCreation: props.selectAnnotationOnCreation,
+                fullAPI: props.enableFullAPI,
                 css: props.customCss,
                 licenseKey: props.l
             },

@@ -17,9 +17,11 @@ export interface WebViewerContainerProps {
     fileAttributeUrl?: EditableValue<string>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enableFullAPI: boolean;
     annotationUser?: EditableValue<string>;
     enableAnnotations: boolean;
     enableMeasurement: boolean;
+    enableRedaction: boolean;
     selectAnnotationOnCreation: boolean;
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;
@@ -39,9 +41,11 @@ export interface WebViewerPreviewProps {
     fileAttributeUrl: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enableFullAPI: boolean;
     annotationUser: string;
     enableAnnotations: boolean;
     enableMeasurement: boolean;
+    enableRedaction: boolean;
     selectAnnotationOnCreation: boolean;
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;
