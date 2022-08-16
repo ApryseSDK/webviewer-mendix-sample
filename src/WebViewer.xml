@@ -66,6 +66,10 @@
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="UI">
+            <property key="containerHeight" type="string" required="true" defaultValue="100vh">
+                <caption>Container height</caption>
+                <description>The height of the container, in CSS, that WebViewer mounts to. Ultimately, the height of WebViewer as well.</description>
+            </property>
             <property key="enableDarkMode" type="boolean" defaultValue="false">
                 <caption>Enable dark mode</caption>
                 <description>Changes to the dark theme.</description>

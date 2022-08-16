@@ -2,6 +2,7 @@ import { createElement, useRef, useEffect, useState } from "react";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 
 export interface InputProps {
+    containerHeight: string;
     file?: string;
     enableFilePicker?: boolean;
     annotationUser?: string;
@@ -66,7 +67,7 @@ const PDFViewer: React.FC<InputProps> = props => {
         }
     }, [instance, props.file]);
 
-    return <div className="webviewer" ref={viewerRef}></div>;
+    return <div className="webviewer" style={{ height: props.containerHeight }} ref={viewerRef}></div>;
 };
 
 export default PDFViewer;

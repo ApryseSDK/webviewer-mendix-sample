@@ -7,6 +7,7 @@ declare function require(name: string): string;
 export class preview extends Component<WebViewerPreviewProps> {
     render(): ReactNode {
         const viewerProps = {
+            containerHeight: this.props.containerHeight,
             file: this.props.fileAttributeUrl || this.props.fileUrl,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser,

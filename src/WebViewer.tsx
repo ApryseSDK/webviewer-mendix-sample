@@ -8,6 +8,7 @@ import "./ui/WebViewer.css";
 export default class WebViewer extends Component<WebViewerContainerProps> {
     render(): ReactNode {
         const viewerProps = {
+            containerHeight: this.props.containerHeight,
             file: this.props.fileAttributeUrl?.value || this.props.fileUrl,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser?.value,
