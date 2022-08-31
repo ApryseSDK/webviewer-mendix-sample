@@ -6,7 +6,26 @@
 import { CSSProperties } from "react";
 import { EditableValue } from "mendix";
 
-export type DefaultLanguageEnum = "en" | "de" | "es" | "fr" | "it" | "ja" | "ko" | "nl" | "pt_br" | "ru" | "zh_cn" | "zh_tw" | "vi" | "uk" | "id" | "ms" | "bn" | "hi" | "tr";
+export type DefaultLanguageEnum =
+    | "en"
+    | "de"
+    | "es"
+    | "fr"
+    | "it"
+    | "ja"
+    | "ko"
+    | "nl"
+    | "pt_br"
+    | "ru"
+    | "zh_cn"
+    | "zh_tw"
+    | "vi"
+    | "uk"
+    | "id"
+    | "ms"
+    | "bn"
+    | "hi"
+    | "tr";
 
 export interface WebViewerContainerProps {
     name: string;

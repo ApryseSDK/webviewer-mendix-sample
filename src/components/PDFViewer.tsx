@@ -48,7 +48,7 @@ const PDFViewer: React.FC<InputProps> = props => {
             const { UI } = instance;
 
             if (props.enableDarkMode) {
-                UI.setTheme('dark');
+                UI.setTheme("dark");
             }
 
             UI.setLanguage(props.defaultLanguage);
