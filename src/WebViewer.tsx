@@ -10,6 +10,7 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
         const viewerProps = {
             containerHeight: this.props.containerHeight,
             file: this.props.fileAttributeUrl?.value || this.props.fileUrl,
+            fileId: this.props.fileId?.value,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser?.value,
             accessibleMode: this.props.accessibleMode,
@@ -24,7 +25,9 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
             enableFullAPI: this.props.enableFullAPI,
             customCss: this.props.customCss,
             defaultLanguage: this.props.defaultLanguage,
-            l: this.props.l
+            l: this.props.l,
+            // Module props
+            enableDocumentUpdates: this.props.enableDocumentUpdates
         };
         return <PDFViewer {...viewerProps} />;
     }

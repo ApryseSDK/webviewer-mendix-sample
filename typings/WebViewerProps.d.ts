@@ -12,6 +12,7 @@ export type DefaultLanguageEnum =
     | "es"
     | "fr"
     | "it"
+    | "el"
     | "ja"
     | "ko"
     | "nl"
@@ -34,6 +35,7 @@ export interface WebViewerContainerProps {
     tabIndex?: number;
     fileUrl: string;
     fileAttributeUrl?: EditableValue<string>;
+    fileId?: EditableValue<string>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;
@@ -49,6 +51,7 @@ export interface WebViewerContainerProps {
     customCss: string;
     accessibleMode: boolean;
     highContrastMode: boolean;
+    enableDocumentUpdates: boolean;
     l: string;
 }
 
@@ -59,6 +62,7 @@ export interface WebViewerPreviewProps {
     readOnly: boolean;
     fileUrl: string;
     fileAttributeUrl: string;
+    fileId: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;
@@ -74,5 +78,6 @@ export interface WebViewerPreviewProps {
     customCss: string;
     accessibleMode: boolean;
     highContrastMode: boolean;
+    enableDocumentUpdates: boolean;
     l: string;
 }
