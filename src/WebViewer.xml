@@ -4,7 +4,7 @@
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>WebViewer</name>
-    <description>My widget description</description>
+    <description>PDFTron WebViewer is a pure client-side JavaScript library that lets you view, edit, and annotate documents and images right in your Mendix application: PDFTron WebViewer is the Mendix integration of PDFTron's industry-leading document SDK.</description>
     <icon/>
     <properties>
         <propertyGroup caption="General">
