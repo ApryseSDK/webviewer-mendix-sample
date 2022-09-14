@@ -15,6 +15,8 @@ export interface InputProps {
     loadAsPDF?: boolean;
     highContrastMode?: boolean;
     notesInLeftPanel?: boolean;
+    enabledElements: string;
+    disabledElements: string;
     selectAnnotationOnCreation?: boolean;
     enableDarkMode?: boolean;
     enableFullAPI?: boolean;
@@ -41,6 +43,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 loadAsPDF: props.loadAsPDF,
                 highContrastMode: props.highContrastMode,
                 notesInLeftPanel: props.notesInLeftPanel,
+                disabledElements: props.disabledElements.split("\r\n"),
                 selectAnnotationOnCreation: props.selectAnnotationOnCreation,
                 fullAPI: props.enableFullAPI,
                 css: props.customCss,
@@ -56,6 +59,10 @@ const PDFViewer: React.FC<InputProps> = props => {
 
             if (props.enableDarkMode) {
                 UI.setTheme("dark");
+            }
+
+            if (props.enabledElements) {
+                UI.enableElements(props.enabledElements.split("\r\n"));
             }
 
             // Check whether the backend module is available

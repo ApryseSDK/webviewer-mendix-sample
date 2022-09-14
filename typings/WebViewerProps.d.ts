@@ -48,6 +48,8 @@ export interface WebViewerContainerProps {
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;
     notesInLeftPanel: boolean;
+    enabledElements: string;
+    disabledElements: string;
     customCss: string;
     accessibleMode: boolean;
     highContrastMode: boolean;
@@ -75,6 +77,8 @@ export interface WebViewerPreviewProps {
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;
     notesInLeftPanel: boolean;
+    enabledElements: string;
+    disabledElements: string;
     customCss: string;
     accessibleMode: boolean;
     highContrastMode: boolean;

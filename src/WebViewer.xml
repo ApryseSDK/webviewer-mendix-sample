@@ -111,6 +111,14 @@
                 <caption>Notes in left panel</caption>
                 <description>Moves the notes panel from the right to the left.</description>
             </property>
+            <property key="enabledElements" type="string" multiline="true" required="false">
+                <caption>Enabled elements</caption>
+                <description>A list of elements (written on individual lines) to enable in the UI. You can find values in the UI using the data-element attribute. Takes priority over disabled elements.</description>
+            </property>
+            <property key="disabledElements" type="string" multiline="true" required="false">
+                <caption>Disabled elements</caption>
+                <description>A list of elements (written on individual lines) to disable in the UI. You can find values in the UI using the data-element attribute.</description>
+            </property>
             <property key="customCss" type="string" required="false">
                 <caption>Custom CSS</caption>
                 <description>Provide a path to your own CSS to customize styling.</description>
