@@ -139,6 +139,10 @@ You can now checkout other guides like [how to open your own documents](https://
 
 See [API documentation](https://www.pdftron.com/documentation/web/guides/ui/apis).
 
+## Support
+
+https://www.pdftron.com/form/trial-support/
+
 ## Contributing
 
 See [contributing](./CONTRIBUTING.md).
