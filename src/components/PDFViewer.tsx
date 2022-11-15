@@ -1,4 +1,5 @@
 import { createElement, useRef, useEffect, useState } from "react";
+import { unmountComponentAtNode } from "react-dom";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 
@@ -18,6 +19,7 @@ export interface InputProps {
     enabledElements: string;
     disabledElements: string;
     selectAnnotationOnCreation?: boolean;
+    isVisible?: boolean;
     enableDarkMode?: boolean;
     enableFullAPI?: boolean;
     customCss?: string;
@@ -29,6 +31,25 @@ export interface InputProps {
 const PDFViewer: React.FC<InputProps> = props => {
     const viewerRef = useRef<HTMLDivElement>(null);
     const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
+
+    // Perform clean-up of WV when unmounted forcibly.
+    useEffect(() => {
+        const topWindow = window.top;
+        return () => {
+            if (wvInstance) {
+                // Disposing WV events
+                wvInstance.UI.dispose();
+                const element = wvInstance.UI.iframeWindow.document.getElementById("app") as Element;
+                // Further remove React component
+                unmountComponentAtNode(element);
+                // This part is necessary as a page refresh is the only way everything gets cleared.
+                // However, the page will show a reload post navigation.
+                if (topWindow) {
+                    topWindow.location.reload();
+                }
+            }
+        };
+    }, [wvInstance]);
 
     useEffect(() => {
         viewer(
@@ -118,7 +139,17 @@ const PDFViewer: React.FC<InputProps> = props => {
         }
     }, [wvInstance, props.file]);
 
-    return <div className="webviewer" style={{ height: props.containerHeight }} ref={viewerRef}></div>;
+    return (
+        <div
+            className="webviewer"
+            style={{
+                height: props.containerHeight,
+                visibility:
+                    props.isVisible || props.isVisible === undefined || props.isVisible === null ? "visible" : "hidden"
+            }}
+            ref={viewerRef}
+        ></div>
+    );
 };
 
 export default PDFViewer;

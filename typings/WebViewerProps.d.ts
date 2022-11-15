@@ -44,6 +44,7 @@ export interface WebViewerContainerProps {
     enableMeasurement: boolean;
     enableRedaction: boolean;
     selectAnnotationOnCreation: boolean;
+    isVisible: EditableValue<boolean>;
     containerHeight: string;
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;
@@ -73,6 +74,7 @@ export interface WebViewerPreviewProps {
     enableMeasurement: boolean;
     enableRedaction: boolean;
     selectAnnotationOnCreation: boolean;
+    isVisible: string;
     containerHeight: string;
     enableDarkMode: boolean;
     defaultLanguage: DefaultLanguageEnum;

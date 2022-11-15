@@ -73,6 +73,13 @@
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="UI">
+            <property key="isVisible" type="attribute">
+                <caption>Is visible</caption>
+                <description>A flag to toggle the visibility of WebViewer. Please use this option to hide WebViewer over the one in Common.</description>
+                <attributeTypes>
+                    <attributeType name="Boolean"/>
+                </attributeTypes>
+            </property>
             <property key="containerHeight" type="string" required="true" defaultValue="100vh">
                 <caption>Container height</caption>
                 <description>The height of the container, in CSS, that WebViewer mounts to. Ultimately, the height of WebViewer as well.</description>

@@ -22,6 +22,7 @@ export class preview extends Component<WebViewerPreviewProps> {
             enabledElements: this.props.enabledElements,
             disabledElements: this.props.disabledElements,
             selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
+            isVisible: this.props.isVisible === "true",
             enableDarkMode: this.props.enableDarkMode,
             enableFullAPI: this.props.enableFullAPI,
             customCss: this.props.customCss,

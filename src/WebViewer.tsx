@@ -23,6 +23,7 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
             enabledElements: this.props.enabledElements,
             disabledElements: this.props.disabledElements,
             selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
+            isVisible: this.props.isVisible?.value,
             enableDarkMode: this.props.enableDarkMode,
             enableFullAPI: this.props.enableFullAPI,
             customCss: this.props.customCss,
