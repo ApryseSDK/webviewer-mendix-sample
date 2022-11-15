@@ -73,7 +73,7 @@
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="UI">
-            <property key="isVisible" type="attribute">
+            <property key="isVisible" type="attribute" required="false">
                 <caption>Is visible</caption>
                 <description>A flag to toggle the visibility of WebViewer. Please use this option to hide WebViewer over the one in Common.</description>
                 <attributeTypes>
