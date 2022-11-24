@@ -1,5 +1,4 @@
 import { createElement, useRef, useEffect, useState } from "react";
-import { unmountComponentAtNode } from "react-dom";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 
@@ -32,21 +31,12 @@ const PDFViewer: React.FC<InputProps> = props => {
     const viewerRef = useRef<HTMLDivElement>(null);
     const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
 
-    // Perform clean-up of WV when unmounted forcibly.
+    // Perform clean-up of WV when unmounted
     useEffect(() => {
-        const topWindow = window.top;
         return () => {
             if (wvInstance) {
                 // Disposing WV events
                 wvInstance.UI.dispose();
-                const element = wvInstance.UI.iframeWindow.document.getElementById("app") as Element;
-                // Further remove React component
-                unmountComponentAtNode(element);
-                // This part is necessary as a page refresh is the only way everything gets cleared.
-                // However, the page will show a reload post navigation.
-                if (topWindow) {
-                    topWindow.location.reload();
-                }
             }
         };
     }, [wvInstance]);
