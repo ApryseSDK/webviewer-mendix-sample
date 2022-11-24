@@ -75,7 +75,7 @@
         <propertyGroup caption="UI">
             <property key="isVisible" type="attribute" required="false">
                 <caption>Is visible</caption>
-                <description>A flag to toggle the visibility of WebViewer. Please use this option to hide WebViewer over the one in Common.</description>
+                <description>A flag to toggle the visibility of WebViewer without unmounting it.</description>
                 <attributeTypes>
                     <attributeType name="Boolean"/>
                 </attributeTypes>

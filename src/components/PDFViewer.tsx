@@ -61,7 +61,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 licenseKey: props.l
             },
             viewerRef.current as HTMLDivElement
-        ).then(instance => {
+        ).then((instance: WebViewerInstance) => {
             const { Core, UI } = instance;
 
             setInstance(instance);

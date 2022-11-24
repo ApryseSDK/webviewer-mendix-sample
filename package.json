@@ -29,7 +29,7 @@
     "@types/react-dom": "~18.0.5"
   },
   "dependencies": {
-    "@pdftron/webviewer": "^8.8.0-20220913",
+    "@pdftron/webviewer": "^8.10.0-20221125",
     "classnames": "^2.2.6"
   }
 }
