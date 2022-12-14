@@ -41,6 +41,7 @@ const PDFViewer: React.FC<InputProps> = props => {
         };
     }, [wvInstance]);
 
+    // Mount WV only once
     useEffect(() => {
         viewer(
             {
@@ -123,11 +124,19 @@ const PDFViewer: React.FC<InputProps> = props => {
         });
     }, [viewer]);
 
+    // Attributes in Mendix may update later, this will load the file after the update
     useEffect(() => {
         if (wvInstance && props.file) {
             wvInstance.UI.loadDocument(props.file);
         }
     }, [wvInstance, props.file]);
+
+    // Attributes in Mendix may update later, this will load the file after the update
+    useEffect(() => {
+        if (wvInstance && props.annotationUser) {
+            wvInstance.Core.annotationManager.setCurrentUser(props.annotationUser);
+        }
+    }, [wvInstance, props.annotationUser]);
 
     return (
         <div
