@@ -31,6 +31,9 @@ const PDFViewer: React.FC<InputProps> = props => {
     const viewerRef = useRef<HTMLDivElement>(null);
     const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
 
+    let documentLoadCount = 0;
+    let currentFileId: string | null | undefined | void = null;
+
     // Perform clean-up of WV when unmounted
     useEffect(() => {
         return () => {
@@ -99,7 +102,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                                 const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
                                 // Send it merged with the document data to REST API to update
-                                const updateTask = WebViewerModuleClient.updateFile(props.fileId || "", fileData);
+                                const updateTask = currentFileId ? WebViewerModuleClient.updateFile(props.fileId || "", fileData) : WebViewerModuleClient.saveFile(fileData);
 
                                 // Add minimum artificial delay to make it look like work is being done
                                 // Otherwise, requests may complete too fast
@@ -115,11 +118,25 @@ const PDFViewer: React.FC<InputProps> = props => {
                                 // Complete when one of them finish
                                 await Promise.all([uiDelay, updateTask]);
 
+                                if (!currentFileId) {
+                                    const currentId = await updateTask;
+                                    currentFileId = currentId;
+                                }
+
                                 instance.UI.closeElements(["loadingModal"]);
                             }
                         });
                     }
                 });
+            });
+
+            Core.documentViewer.addEventListener('documentLoaded', () => {
+                documentLoadCount++;
+                if (documentLoadCount > 1 && currentFileId) {
+                    currentFileId = null;
+                } else {
+                    currentFileId = props.fileId;
+                }
             });
         });
     }, [viewer]);

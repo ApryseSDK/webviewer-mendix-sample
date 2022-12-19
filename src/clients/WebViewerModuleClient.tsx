@@ -23,6 +23,19 @@ class WebViewerModuleClient {
             console.info("[Module] Failed to save document.", e);
         }
     }
+    async saveFile(fileData: ArrayBuffer): Promise<string | null | undefined> {
+        try {
+            const res = await fetch(`/rest/documentstore/v1/documents`, {
+                method: "POST",
+                body: fileData
+            });
+            return await res.text();
+        } catch (e) {
+            console.info("[Module] Failed to save document.", e);
+        }
+
+        return null;
+    }
 }
 
 export default new WebViewerModuleClient();
