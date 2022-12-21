@@ -1,4 +1,5 @@
 import { createElement, useRef, useEffect, useState } from "react";
+import { debounce } from "lodash";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 
@@ -151,6 +152,8 @@ const PDFViewer: React.FC<InputProps> = props => {
                             props.xfdfAttribute.setValue(xfdfString);
                         };
 
+                        const debouncedXfdfUpdate = debounce(updateXfdfAttribute, 1000);
+
                         if (props.enableXfdfExportButton) {
                             UI.setHeaderItems(header => {
                                 header.push({
@@ -163,7 +166,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                         }
 
                         if (props.enableAutoXfdfExport) {
-                            Core.annotationManager.addEventListener("annotationChanged", updateXfdfAttribute);
+                            Core.annotationManager.addEventListener("annotationChanged", debouncedXfdfUpdate);
                         }
                     }
                 }
