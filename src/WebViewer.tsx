@@ -9,7 +9,7 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
     render(): ReactNode {
         const viewerProps = {
             containerHeight: this.props.containerHeight,
-            file: this.props.fileAttributeUrl?.value || this.props.fileUrl,
+            fileUrl: this.props.fileAttributeUrl?.value || this.props.fileUrl,
             fileId: this.props.fileId?.value,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser?.value,
@@ -17,6 +17,9 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
             enableMeasurement: this.props.enableMeasurement,
             enableRedaction: this.props.enableRedaction,
             enableAnnotations: this.props.enableAnnotations,
+            xfdfAttribute: this.props.xfdfAttribute,
+            enableXfdfExportButton: this.props.enableXfdfExportButton,
+            enableAutoXfdfExport: this.props.enableAutoXfdfExport,
             loadAsPDF: this.props.loadAsPDF,
             highContrastMode: this.props.highContrastMode,
             notesInLeftPanel: this.props.notesInLeftPanel,

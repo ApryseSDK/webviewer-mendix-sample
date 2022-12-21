@@ -4,7 +4,7 @@ import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 
 export interface InputProps {
     containerHeight: string;
-    file?: string;
+    fileUrl?: string;
     fileId?: string;
     enableFilePicker?: boolean;
     annotationUser?: string;
@@ -12,6 +12,9 @@ export interface InputProps {
     enableMeasurement?: boolean;
     enableRedaction?: boolean;
     enableAnnotations?: boolean;
+    xfdfAttribute?: any;
+    enableXfdfExportButton: boolean;
+    enableAutoXfdfExport: boolean;
     loadAsPDF?: boolean;
     highContrastMode?: boolean;
     notesInLeftPanel?: boolean;
@@ -90,6 +93,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                     if (props.enableDocumentUpdates) {
                         header.push({
                             type: "actionButton",
+                            title: "Save document",
                             img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
                             onClick: async () => {
                                 // Export annotation XFDF
@@ -102,7 +106,9 @@ const PDFViewer: React.FC<InputProps> = props => {
                                 const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
                                 // Send it merged with the document data to REST API to update
-                                const updateTask = currentFileId ? WebViewerModuleClient.updateFile(props.fileId || "", fileData) : WebViewerModuleClient.saveFile(fileData);
+                                const updateTask = currentFileId
+                                    ? WebViewerModuleClient.updateFile(props.fileId || "", fileData)
+                                    : WebViewerModuleClient.saveFile(fileData);
 
                                 // Add minimum artificial delay to make it look like work is being done
                                 // Otherwise, requests may complete too fast
@@ -128,9 +134,42 @@ const PDFViewer: React.FC<InputProps> = props => {
                         });
                     }
                 });
+
+                if (props.xfdfAttribute) {
+                    if (props.xfdfAttribute.readOnly && (props.enableXfdfExportButton || props.enableAutoXfdfExport)) {
+                        console.warn(
+                            "The XFDF attribute is read-only. Please check the user permissions or allow the data source to be editable."
+                        );
+                    } else {
+                        const updateXfdfAttribute = async (): Promise<void> => {
+                            const doc = Core.documentViewer.getDocument();
+                            if (!doc) {
+                                return;
+                            }
+
+                            const xfdfString = await Core.annotationManager.exportAnnotations();
+                            props.xfdfAttribute.setValue(xfdfString);
+                        };
+
+                        if (props.enableXfdfExportButton) {
+                            UI.setHeaderItems(header => {
+                                header.push({
+                                    type: "actionButton",
+                                    title: "Save XFDF",
+                                    img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
+                                    onClick: updateXfdfAttribute
+                                });
+                            });
+                        }
+
+                        if (props.enableAutoXfdfExport) {
+                            Core.annotationManager.addEventListener("annotationsChanged", updateXfdfAttribute);
+                        }
+                    }
+                }
             });
 
-            Core.documentViewer.addEventListener('documentLoaded', () => {
+            Core.documentViewer.addEventListener("documentLoaded", () => {
                 documentLoadCount++;
                 if (documentLoadCount > 1 && currentFileId) {
                     currentFileId = null;
@@ -143,10 +182,10 @@ const PDFViewer: React.FC<InputProps> = props => {
 
     // Attributes in Mendix may update later, this will load the file after the update
     useEffect(() => {
-        if (wvInstance && props.file) {
-            wvInstance.UI.loadDocument(props.file);
+        if (wvInstance && props.fileUrl) {
+            wvInstance.UI.loadDocument(props.fileUrl);
         }
-    }, [wvInstance, props.file]);
+    }, [wvInstance, props.fileUrl]);
 
     // Attributes in Mendix may update later, this will load the file after the update
     useEffect(() => {
