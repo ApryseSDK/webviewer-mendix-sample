@@ -163,7 +163,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                         }
 
                         if (props.enableAutoXfdfExport) {
-                            Core.annotationManager.addEventListener("annotationsChanged", updateXfdfAttribute);
+                            Core.annotationManager.addEventListener("annotationChanged", updateXfdfAttribute);
                         }
                     }
                 }
