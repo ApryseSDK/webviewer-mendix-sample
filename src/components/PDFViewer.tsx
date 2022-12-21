@@ -16,6 +16,7 @@ export interface InputProps {
     xfdfAttribute?: any;
     enableXfdfExportButton: boolean;
     enableAutoXfdfExport: boolean;
+    enableAutoXfdfImport: boolean;
     loadAsPDF?: boolean;
     highContrastMode?: boolean;
     notesInLeftPanel?: boolean;
@@ -142,7 +143,15 @@ const PDFViewer: React.FC<InputProps> = props => {
                             "The XFDF attribute is read-only. Please check the user permissions or allow the data source to be editable."
                         );
                     } else {
-                        const updateXfdfAttribute = async (): Promise<void> => {
+                        const updateXfdfAttribute = async (
+                            _annotations: Event | any[],
+                            _action: string,
+                            info: any
+                        ): Promise<void> => {
+                            // Skip import events
+                            if (info && info.imported) {
+                                return;
+                            }
                             const doc = Core.documentViewer.getDocument();
                             if (!doc) {
                                 return;
@@ -178,6 +187,13 @@ const PDFViewer: React.FC<InputProps> = props => {
                     currentFileId = null;
                 } else {
                     currentFileId = props.fileId;
+                }
+            });
+
+            Core.documentViewer.setDocumentXFDFRetriever(async () => {
+                // Only auto import when we are loading from a file entity
+                if (currentFileId && props.enableAutoXfdfImport) {
+                    return props.xfdfAttribute.value;
                 }
             });
         });

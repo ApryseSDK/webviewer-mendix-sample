@@ -47,6 +47,7 @@ export interface WebViewerContainerProps {
     xfdfAttribute?: EditableValue<string>;
     enableXfdfExportButton: boolean;
     enableAutoXfdfExport: boolean;
+    enableAutoXfdfImport: boolean;
     isVisible?: EditableValue<boolean>;
     containerHeight: string;
     enableDarkMode: boolean;
@@ -81,6 +82,7 @@ export interface WebViewerPreviewProps {
     onExportXfdf: {} | null;
     enableXfdfExportButton: boolean;
     enableAutoXfdfExport: boolean;
+    enableAutoXfdfImport: boolean;
     isVisible: string;
     containerHeight: string;
     enableDarkMode: boolean;

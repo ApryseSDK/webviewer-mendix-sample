@@ -91,6 +91,10 @@
                     <caption>Enable Auto XFDF Export</caption>
                     <description>Enable automatic saving of the annotation XFDF when annotations change.</description>
                 </property>
+                <property key="enableAutoXfdfImport" type="boolean" defaultValue="false">
+                    <caption>Enable Auto XFDF Import</caption>
+                    <description>Enable automatic importing of the annotation XFDF when the document loads.</description>
+                </property>
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="UI">
