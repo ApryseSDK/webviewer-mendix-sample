@@ -8,7 +8,7 @@ export class preview extends Component<WebViewerPreviewProps> {
     render(): ReactNode {
         const viewerProps = {
             containerHeight: this.props.containerHeight,
-            file: this.props.fileAttributeUrl || this.props.fileUrl,
+            fileUrl: this.props.fileAttributeUrl || this.props.fileUrl,
             fileId: this.props.fileId,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser,
@@ -16,6 +16,10 @@ export class preview extends Component<WebViewerPreviewProps> {
             enableMeasurement: this.props.enableMeasurement,
             enableRedaction: this.props.enableRedaction,
             enableAnnotations: this.props.enableAnnotations,
+            xfdfAttribute: this.props.xfdfAttribute,
+            enableXfdfExportButton: this.props.enableXfdfExportButton,
+            enableAutoXfdfExport: this.props.enableAutoXfdfExport,
+            enableAutoXfdfImport: this.props.enableAutoXfdfImport,
             loadAsPDF: this.props.loadAsPDF,
             highContrastMode: this.props.highContrastMode,
             notesInLeftPanel: this.props.notesInLeftPanel,

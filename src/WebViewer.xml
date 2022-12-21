@@ -71,6 +71,31 @@
                     <description>Automatically select annotations when they are created.</description>
                 </property>
             </propertyGroup>
+            <propertyGroup caption="XFDF">
+                <property key="xfdfAttribute" type="attribute" required="false" onChange="onExportXfdf">
+                    <caption>XFDF Attribute</caption>
+                    <description>The XFDF attribute to import from and export to.</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                    </attributeTypes>
+                </property>
+                <property key="onExportXfdf" type="action" required="false">
+                    <caption>On export XFDF</caption>
+                    <description>Trigger an action when exporting annotations to XFDF. This can occur many times when auto-export is enabled.</description>
+                </property>
+                <property key="enableXfdfExportButton" type="boolean" defaultValue="false">
+                    <caption>Enable XFDF Export Button</caption>
+                    <description>Enable the button to manually export and save annotations as XFDF.</description>
+                </property>
+                <property key="enableAutoXfdfExport" type="boolean" defaultValue="false">
+                    <caption>Enable Auto XFDF Export</caption>
+                    <description>Enable automatic saving of the annotation XFDF when annotations change.</description>
+                </property>
+                <property key="enableAutoXfdfImport" type="boolean" defaultValue="false">
+                    <caption>Enable Auto XFDF Import</caption>
+                    <description>Enable automatic importing of the annotation XFDF when the document loads.</description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="UI">
             <property key="isVisible" type="attribute" required="false">
