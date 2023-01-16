@@ -6,27 +6,7 @@
 import { CSSProperties } from "react";
 import { EditableValue } from "mendix";
 
-export type DefaultLanguageEnum =
-    | "en"
-    | "de"
-    | "es"
-    | "fr"
-    | "it"
-    | "el"
-    | "ja"
-    | "ko"
-    | "nl"
-    | "pt_br"
-    | "ru"
-    | "zh_cn"
-    | "zh_tw"
-    | "vi"
-    | "uk"
-    | "id"
-    | "ms"
-    | "bn"
-    | "hi"
-    | "tr";
+export type DefaultLanguageEnum = "en" | "de" | "es" | "fr" | "it" | "el" | "ja" | "ko" | "nl" | "pt_br" | "ru" | "zh_cn" | "zh_tw" | "vi" | "uk" | "id" | "ms" | "bn" | "hi" | "tr";
 
 export interface WebViewerContainerProps {
     name: string;
@@ -34,8 +14,8 @@ export interface WebViewerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     fileUrl: string;
-    fileAttributeUrl?: EditableValue<string>;
-    fileId?: EditableValue<string>;
+    fileUrlAttribute?: EditableValue<string>;
+    fileIdAttribute?: EditableValue<string>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;
@@ -68,8 +48,8 @@ export interface WebViewerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     fileUrl: string;
-    fileAttributeUrl: string;
-    fileId: string;
+    fileUrlAttribute: string;
+    fileIdAttribute: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;

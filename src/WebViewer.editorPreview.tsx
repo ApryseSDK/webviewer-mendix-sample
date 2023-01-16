@@ -8,8 +8,9 @@ export class preview extends Component<WebViewerPreviewProps> {
     render(): ReactNode {
         const viewerProps = {
             containerHeight: this.props.containerHeight,
-            fileUrl: this.props.fileAttributeUrl || this.props.fileUrl,
-            fileId: this.props.fileId,
+            fileUrl: this.props.fileUrl,
+            fileUrlAttribute: this.props.fileUrlAttribute,
+            fileIdAttribute: this.props.fileIdAttribute,
             enableFilePicker: this.props.enableFilePicker,
             annotationUser: this.props.annotationUser,
             accessibleMode: this.props.accessibleMode,
