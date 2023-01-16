@@ -31,6 +31,7 @@ export interface InputProps {
     defaultLanguage: string;
     l?: string;
     enableDocumentUpdates?: boolean;
+    enableSaveAsButton?: boolean;
 }
 
 export interface ViewerState {
@@ -100,6 +101,50 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                             title: "Save document",
                             img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
                             onClick: async () => {
+                                // Send it merged with the document data to REST API to update
+                                if (this.state.currentFileId || this.props.fileIdAttribute) {
+                                    // Export annotation XFDF
+                                    const xfdfString = await Core.annotationManager.exportAnnotations({
+                                        fields: true,
+                                        links: true,
+                                        widgets: true
+                                    });
+
+                                    const fileData = await Core.documentViewer
+                                        .getDocument()
+                                        .getFileData({ xfdfString });
+
+                                    await WebViewerModuleClient.updateFile(
+                                        this.state.currentFileId || this.props.fileIdAttribute.value || "",
+                                        fileData
+                                    );
+
+                                    // Add minimum artificial delay to make it look like work is being done
+                                    // Otherwise, requests may complete too fast
+                                    const uiDelay = new Promise(resolve => {
+                                        setTimeout(() => {
+                                            resolve(undefined);
+                                        }, 3000);
+                                    });
+
+                                    // Show existing loading modal
+                                    UI.openElements(["loadingModal"]);
+
+                                    // Complete when one of them finish
+                                    await Promise.all([uiDelay]);
+
+                                    UI.closeElements(["loadingModal"]);
+                                }
+                            }
+                        });
+                    }
+
+                    if (this.props.enableSaveAsButton) {
+                        header.push({
+                            type: "actionButton",
+                            title: "Save As",
+                            img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
+                            onClick: async () => {
                                 // Export annotation XFDF
                                 const xfdfString = await Core.annotationManager.exportAnnotations({
                                     fields: true,
@@ -109,21 +154,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
 
                                 const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
-                                let saveTask: any = Promise.resolve("");
-
-                                // Send it merged with the document data to REST API to update
-                                if (this.props.fileIdAttribute) {
-                                    if (this.state.currentFileId) {
-                                        await WebViewerModuleClient.updateFile(
-                                            this.props.fileIdAttribute.value || "",
-                                            fileData
-                                        );
-                                    }
-                                }
-
-                                if (this.props.fileUrl && !this.props.fileIdAttribute) {
-                                    saveTask = WebViewerModuleClient.saveFile(fileData);
-                                }
+                                const saveTask: any = WebViewerModuleClient.saveFile(fileData);
 
                                 // Add minimum artificial delay to make it look like work is being done
                                 // Otherwise, requests may complete too fast
@@ -139,10 +170,8 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                                 // Complete when one of them finish
                                 await Promise.all([uiDelay, saveTask]);
 
-                                if (!this.props.fileIdAttribute) {
-                                    const currentId = await saveTask;
-                                    this.setState({ currentFileId: Number(currentId) });
-                                }
+                                const currentId = await saveTask;
+                                this.setState({ currentFileId: Number(currentId) });
 
                                 UI.closeElements(["loadingModal"]);
                             }
@@ -158,7 +187,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                 Core.annotationManager.setCurrentUser(this.props.annotationUser);
             }
 
-            // Attribute takes priority
+            // Loading from attribute takes priority
             if (hasAttribute(this.props.fileUrlAttribute)) {
                 UI.loadDocument(this.props.fileUrlAttribute.value);
             } else if (this.props.fileUrl && !this.props.fileUrlAttribute) {

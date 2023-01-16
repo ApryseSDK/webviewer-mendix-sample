@@ -171,6 +171,10 @@
                 <caption>Enable document updates</caption>
                 <description>Adds a button to the header to allow updating the document on the server (annotations, links, widgets). Requires WebViewer module.</description>
             </property>
+            <property key="enableSaveAsButton" type="boolean" defaultValue="true">
+                <caption>Enable save as</caption>
+                <description>Adds a button to the header to allow saving a document to the server as a new file. Requires WebViewer module.</description>
+            </property>
         </propertyGroup>
         <propertyGroup caption="License">
             <property key="l" type="string" required="false">

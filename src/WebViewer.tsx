@@ -35,7 +35,8 @@ export default class WebViewer extends Component<WebViewerContainerProps> {
             defaultLanguage: this.props.defaultLanguage,
             l: this.props.l,
             // Module props
-            enableDocumentUpdates: this.props.enableDocumentUpdates
+            enableDocumentUpdates: this.props.enableDocumentUpdates,
+            enableSaveAsButton: this.props.enableSaveAsButton
         };
         return <PDFViewer {...viewerProps} />;
     }
