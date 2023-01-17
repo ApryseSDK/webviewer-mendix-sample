@@ -35,6 +35,7 @@ export interface InputProps {
 }
 
 export interface ViewerState {
+    wvInstance?: WebViewerInstance;
     isDocumentLoaded: boolean;
     currentFileId?: number;
 }
@@ -43,12 +44,11 @@ const hasAttribute = (attribute: any): boolean => attribute && attribute.status 
 
 class PDFViewer extends React.Component<InputProps, ViewerState> {
     viewerRef: React.RefObject<HTMLDivElement>;
-    wvInstance?: WebViewerInstance;
     constructor(props: InputProps) {
         super(props);
         this.viewerRef = React.createRef();
-        this.wvInstance = undefined;
         this.state = {
+            wvInstance: undefined,
             isDocumentLoaded: false,
             currentFileId: undefined
         };
@@ -76,7 +76,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
         ).then((instance: WebViewerInstance) => {
             const { Core, UI } = instance;
 
-            this.wvInstance = instance;
+            this.setState({ wvInstance: instance });
 
             UI.setLanguage(this.props.defaultLanguage);
 
@@ -261,9 +261,9 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
     }
     componentWillUnmount(): void {
         // Perform clean-up of WV when unmounted
-        if (this.wvInstance) {
+        if (this.state.wvInstance) {
             // Disposing WV events
-            this.wvInstance.UI.dispose();
+            this.state.wvInstance.UI.dispose();
         }
     }
     render(): ReactNode {
