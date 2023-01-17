@@ -264,6 +264,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
         if (this.state.wvInstance) {
             // Disposing WV events
             this.state.wvInstance.UI.dispose();
+            this.setState({ wvInstance: undefined });
         }
     }
     render(): ReactNode {
