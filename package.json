@@ -25,6 +25,7 @@
     "@mendix/pluggable-widgets-tools": "^9.13.2",
     "@types/big.js": "^6.1.4",
     "@types/classnames": "^2.2.4",
+    "@types/lodash": "^4.14.191",
     "@types/react": "~18.0.14",
     "@types/react-dom": "~18.0.5"
   },

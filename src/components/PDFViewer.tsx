@@ -1,4 +1,4 @@
-import React, { createElement, ReactNode } from "react";
+import React, { createElement, useRef, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 import WebViewerModuleClient from "../clients/WebViewerModuleClient";
@@ -34,58 +34,62 @@ export interface InputProps {
     enableSaveAsButton?: boolean;
 }
 
-export interface ViewerState {
-    wvInstance?: WebViewerInstance;
-    isDocumentLoaded: boolean;
-    currentFileId?: number;
-}
-
 const hasAttribute = (attribute: any): boolean => attribute && attribute.status === "available";
 
-class PDFViewer extends React.Component<InputProps, ViewerState> {
-    viewerRef: React.RefObject<HTMLDivElement>;
-    constructor(props: InputProps) {
-        super(props);
-        this.viewerRef = React.createRef();
-        this.state = {
-            wvInstance: undefined,
-            isDocumentLoaded: false,
-            currentFileId: undefined
+const PDFViewer: React.FC<InputProps> = props => {
+    const viewerRef = useRef<HTMLDivElement>(null);
+    const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
+
+    const isDocumentLoadedRef: React.MutableRefObject<any> = useRef(false);
+    const previousFileIdRef: React.MutableRefObject<any> = useRef(null);
+    const currentFileIdRef: React.MutableRefObject<any> = useRef(null);
+
+    // Perform clean-up of WV when unmounted
+    useEffect(() => {
+        return () => {
+            if (wvInstance) {
+                // Disposing WV events
+                wvInstance.UI.dispose();
+            }
         };
-    }
-    componentDidMount(): void {
+    }, [wvInstance]);
+
+    // Mount WV only once
+    useEffect(() => {
         viewer(
             {
                 path: "/resources/lib",
-                enableFilePicker: this.props.enableFilePicker,
-                annotationUser: this.props.annotationUser,
-                accessibleMode: this.props.accessibleMode,
-                enableMeasurement: this.props.enableMeasurement,
-                enableRedaction: this.props.enableRedaction,
-                enableAnnotations: this.props.enableAnnotations,
-                loadAsPDF: this.props.loadAsPDF,
-                highContrastMode: this.props.highContrastMode,
-                notesInLeftPanel: this.props.notesInLeftPanel,
-                disabledElements: this.props.disabledElements.split("\r\n"),
-                selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
-                fullAPI: this.props.enableFullAPI,
-                css: this.props.customCss,
-                licenseKey: this.props.l
+                enableFilePicker: props.enableFilePicker,
+                annotationUser: props.annotationUser,
+                accessibleMode: props.accessibleMode,
+                enableMeasurement: props.enableMeasurement,
+                enableRedaction: props.enableRedaction,
+                enableAnnotations: props.enableAnnotations,
+                loadAsPDF: props.loadAsPDF,
+                highContrastMode: props.highContrastMode,
+                notesInLeftPanel: props.notesInLeftPanel,
+                disabledElements: props.disabledElements.split("\r\n"),
+                selectAnnotationOnCreation: props.selectAnnotationOnCreation,
+                fullAPI: props.enableFullAPI,
+                css: props.customCss,
+                licenseKey: props.l
             },
-            this.viewerRef.current as HTMLDivElement
+            viewerRef.current as HTMLDivElement
         ).then((instance: WebViewerInstance) => {
             const { Core, UI } = instance;
 
-            this.setState({ wvInstance: instance });
+            setInstance(instance);
 
-            UI.setLanguage(this.props.defaultLanguage);
+            UI.setLanguage(props.defaultLanguage);
 
-            if (this.props.enableDarkMode) {
+            if (props.enableDarkMode) {
                 UI.setTheme("dark");
+            } else {
+                UI.setTheme("light");
             }
 
-            if (this.props.enabledElements) {
-                UI.enableElements(this.props.enabledElements.split("\r\n"));
+            if (props.enabledElements) {
+                UI.enableElements(props.enabledElements.split("\r\n"));
             }
 
             // Check whether the backend module is available
@@ -95,14 +99,14 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                 }
 
                 UI.setHeaderItems((header: any) => {
-                    if (this.props.enableDocumentUpdates) {
+                    if (props.enableDocumentUpdates) {
                         header.push({
                             type: "actionButton",
                             title: "Save document",
                             img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
                             onClick: async () => {
                                 // Send it merged with the document data to REST API to update
-                                if (this.state.currentFileId || this.props.fileIdAttribute) {
+                                if (currentFileIdRef.current || props.fileIdAttribute) {
                                     // Export annotation XFDF
                                     const xfdfString = await Core.annotationManager.exportAnnotations({
                                         fields: true,
@@ -115,7 +119,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                                         .getFileData({ xfdfString });
 
                                     await WebViewerModuleClient.updateFile(
-                                        this.state.currentFileId || this.props.fileIdAttribute.value || "",
+                                        currentFileIdRef.current || props.fileIdAttribute.value || "",
                                         fileData
                                     );
 
@@ -139,7 +143,7 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                         });
                     }
 
-                    if (this.props.enableSaveAsButton) {
+                    if (props.enableSaveAsButton) {
                         header.push({
                             type: "actionButton",
                             title: "Save As",
@@ -171,39 +175,25 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                                 await Promise.all([uiDelay, saveTask]);
 
                                 const currentId = await saveTask;
-                                this.setState({ currentFileId: Number(currentId) });
+                                previousFileIdRef.current = currentFileIdRef.current;
+                                currentFileIdRef.current = Number(currentId);
 
                                 UI.closeElements(["loadingModal"]);
                             }
                         });
                     }
                 });
-            });
 
-            Core.documentViewer.addEventListener("documentLoaded", () => this.setState({ isDocumentLoaded: true }));
-            Core.documentViewer.addEventListener("documentUnloaded", () => this.setState({ isDocumentLoaded: false }));
+                // Manual and auto XFDF export
+                if (hasAttribute(props.xfdfAttribute)) {
+                    if (props.xfdfAttribute.readOnly) {
+                        console.warn(
+                            "The XFDF attribute is read-only. Please check the user permissions or allow the data source to be editable."
+                        );
+                        return;
+                    }
+                    const { documentViewer, annotationManager } = Core;
 
-            if (this.props.annotationUser) {
-                Core.annotationManager.setCurrentUser(this.props.annotationUser);
-            }
-
-            // Loading from attribute takes priority
-            if (hasAttribute(this.props.fileUrlAttribute)) {
-                UI.loadDocument(this.props.fileUrlAttribute.value);
-            } else if (this.props.fileUrl && !this.props.fileUrlAttribute) {
-                UI.loadDocument(this.props.fileUrl);
-            }
-
-            if (hasAttribute(this.props.fileIdAttribute)) {
-                this.setState({ currentFileId: this.props.fileIdAttribute.value });
-            }
-
-            if (hasAttribute(this.props.xfdfAttribute)) {
-                if (this.props.xfdfAttribute.readOnly) {
-                    console.warn(
-                        "The XFDF attribute is read-only. Please check the user permissions or allow the data source to be editable."
-                    );
-                } else {
                     const updateXfdfAttribute = async (
                         _annotations: Event | any[],
                         _action: string,
@@ -213,18 +203,17 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                         if (info && info.imported) {
                             return;
                         }
-                        const doc = Core.documentViewer.getDocument();
+                        const doc = documentViewer.getDocument();
                         if (!doc) {
                             return;
                         }
 
-                        const xfdfString = await Core.annotationManager.exportAnnotations();
-                        this.props.xfdfAttribute.setValue(xfdfString);
+                        const xfdfString = await annotationManager.exportAnnotations();
+                        // Update Mendix XFDF Attribute
+                        props.xfdfAttribute.setValue(xfdfString);
                     };
 
-                    const debouncedXfdfUpdate = debounce(updateXfdfAttribute, 1000);
-
-                    if (this.props.enableXfdfExportButton) {
+                    if (props.enableXfdfExportButton) {
                         UI.setHeaderItems((header: any) => {
                             header.push({
                                 type: "actionButton",
@@ -235,53 +224,77 @@ class PDFViewer extends React.Component<InputProps, ViewerState> {
                         });
                     }
 
-                    if (this.props.enableAutoXfdfExport) {
-                        Core.annotationManager.addEventListener("annotationChanged", debouncedXfdfUpdate);
+                    if (props.enableAutoXfdfExport) {
+                        // Use debouncing to get final XFDF after changes
+                        const debouncedXfdfUpdate = debounce(updateXfdfAttribute, 1000);
+                        annotationManager.addEventListener("annotationChanged", debouncedXfdfUpdate);
                     }
                 }
-            }
+            });
 
-            if (this.props.enableAutoXfdfImport && this.state.currentFileId) {
-                if (!this.props.xfdfAttribute) {
-                    console.warn("There was no XFDF attribute provided to the WebViewer component.");
-                } else if (hasAttribute(this.props.xfdfAttribute)) {
-                    if (this.state.isDocumentLoaded) {
-                        Core.annotationManager.importAnnotations(this.props.xfdfAttribute.value);
-                    } else {
-                        Core.documentViewer.setDocumentXFDFRetriever(async () => {
-                            // Only auto import when we are loading from a file entity
-                            if (this.state.currentFileId && this.props.enableAutoXfdfImport) {
-                                return this.props.xfdfAttribute.value;
-                            }
-                        });
-                    }
+            Core.documentViewer.addEventListener("documentLoaded", () => {
+                isDocumentLoadedRef.current = true;
+                if (hasAttribute(props.fileIdAttribute)) {
+                    currentFileIdRef.current = Number(props.fileIdAttribute?.value);
                 }
-            }
+            });
+
+            Core.documentViewer.addEventListener("documentUnloaded", () => {
+                isDocumentLoadedRef.current = false;
+                previousFileIdRef.current = currentFileIdRef.current;
+                currentFileIdRef.current = null;
+            });
+
+            Core.documentViewer.setDocumentXFDFRetriever(async () => {
+                // Only auto import when we are loading from a file entity
+                if (currentFileIdRef.current && props.enableAutoXfdfImport && hasAttribute(props.xfdfAttribute)) {
+                    return props.xfdfAttribute.value;
+                }
+            });
         });
-    }
-    componentWillUnmount(): void {
-        // Perform clean-up of WV when unmounted
-        if (this.state.wvInstance) {
-            // Disposing WV events
-            this.state.wvInstance.UI.dispose();
-            this.setState({ wvInstance: undefined });
+    }, [viewer]);
+
+    // Attributes in Mendix may update later, this will load the file after the update
+    useEffect(() => {
+        // Load from attribute over plain string
+        if (wvInstance) {
+            if (hasAttribute(props.fileUrlAttribute)) {
+                wvInstance.UI.loadDocument(props.fileUrlAttribute.value);
+            } else if (props.fileUrl && !props.fileUrlAttribute) {
+                previousFileIdRef.current = currentFileIdRef.current;
+                currentFileIdRef.current = null;
+                wvInstance.UI.loadDocument(props.fileUrl);
+            }
         }
-    }
-    render(): ReactNode {
-        return (
-            <div
-                className="webviewer"
-                style={{
-                    height: this.props.containerHeight,
-                    visibility:
-                        this.props.isVisible || this.props.isVisible === undefined || this.props.isVisible === null
-                            ? "visible"
-                            : "hidden"
-                }}
-                ref={this.viewerRef}
-            ></div>
-        );
-    }
-}
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [wvInstance, props.fileUrl]); // Ignore file URL attribute or it will cause the file to reload
+
+    useEffect(() => {
+        // Set file ID for saving back to Mendix when ready
+        if (wvInstance && hasAttribute(props.fileIdAttribute)) {
+            previousFileIdRef.current = currentFileIdRef.current;
+            currentFileIdRef.current = Number(props.fileIdAttribute.value);
+        }
+    }, [wvInstance, props.fileIdAttribute]);
+
+    useEffect(() => {
+        // Setting the annotation user in WV
+        if (wvInstance && props.annotationUser) {
+            wvInstance.Core.annotationManager.setCurrentUser(props.annotationUser);
+        }
+    }, [wvInstance, props.annotationUser]);
+
+    return (
+        <div
+            className="webviewer"
+            style={{
+                height: props.containerHeight,
+                visibility:
+                    props.isVisible || props.isVisible === undefined || props.isVisible === null ? "visible" : "hidden"
+            }}
+            ref={viewerRef}
+        ></div>
+    );
+};
 
 export default PDFViewer;
