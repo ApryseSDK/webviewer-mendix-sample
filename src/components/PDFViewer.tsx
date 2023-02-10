@@ -55,6 +55,7 @@ const PDFViewer: React.FC<InputProps> = props => {
         };
     }, [wvInstance]);
 
+    // https://stackoverflow.com/questions/53845595/wrong-react-hooks-behaviour-with-event-listener
     useEffect(() => {
         if (wvInstance && wvUIEventHandlers.current) {
             const { Core, UI } = wvInstance;
