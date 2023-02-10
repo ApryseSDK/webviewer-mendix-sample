@@ -148,7 +148,7 @@ const PDFViewer: React.FC<InputProps> = props => {
             if (props.enableAutoXfdfExport) {
                 Core.annotationManager.removeEventListener(
                     "annotationChanged",
-                    wvUIEventHandlers.current.updateXfdfAttribute
+                    wvUIEventHandlers.current.debouncedXfdfUpdate
                 );
                 wvUIEventHandlers.current.debouncedXfdfUpdate = debounce(
                     wvUIEventHandlers.current.updateXfdfAttribute,
