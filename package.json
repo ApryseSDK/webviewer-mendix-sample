@@ -25,11 +25,12 @@
     "@mendix/pluggable-widgets-tools": "^9.13.2",
     "@types/big.js": "^6.1.4",
     "@types/classnames": "^2.2.4",
+    "@types/lodash": "^4.14.191",
     "@types/react": "~18.0.14",
     "@types/react-dom": "~18.0.5"
   },
   "dependencies": {
-    "@pdftron/webviewer": "^8.11.0-20230117",
+    "@pdftron/webviewer": "^8.11.0-20230209",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21"
   }
