@@ -175,6 +175,14 @@
                 <caption>Enable save as</caption>
                 <description>Adds a button to the header to allow saving a document to the server as a new file. Requires WebViewer module.</description>
             </property>
+            <property key="continueAutoXfdfImport" type="boolean" defaultValue="false">
+                <caption>Continue Auto XFDF Import</caption>
+                <description>Continue to import XFDF from the server. This achieves real-time updates at specific intervals. Requires WebViewer module.</description>
+            </property>
+            <property key="autoXfdfImportInterval" type="integer" defaultValue="1000">
+                <caption>Auto Import Interval</caption>
+                <description>The interval in milliseconds to get XFDF updates from the server for the current file.</description>
+            </property>
         </propertyGroup>
         <propertyGroup caption="License">
             <property key="l" type="string" required="false">
