@@ -3,7 +3,7 @@
   "widgetName": "WebViewer",
   "version": "1.5.0",
   "description": "My widget description",
-  "copyright": "2023 PDFTron",
+  "copyright": "2023 Apryse",
   "author": "Andrey Safonov",
   "config": {
     "projectPath": "../..//",

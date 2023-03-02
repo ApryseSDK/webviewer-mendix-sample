@@ -1,6 +1,6 @@
 # WebViewer - Mendix Web Widget
 
-[WebViewer](https://www.pdftron.com/documentation/web/) is a powerful JavaScript-based PDF Library that's part of the [PDFTron PDF SDK](https://www.pdftron.com). It provides a slick out-of-the-box responsive UI that interacts with the core library to view, annotate and manipulate PDFs that can be embedded into any web project.
+[WebViewer](https://docs.apryse.com/documentation/web/) is a powerful JavaScript-based PDF Library that's part of the [Apryse PDF SDK](https://www.apryse.com). It provides a slick out-of-the-box responsive UI that interacts with the core library to view, annotate and manipulate PDFs that can be embedded into any web project.
 
 ![WebViewer UI](https://www.pdftron.com/downloads/pl/webviewer-ui.png)
 
@@ -129,19 +129,19 @@ useEffect(() => {
 }, [props.value]);
 ```
 
-In the code snippet, we are listening for any of the changes in `props` and then calling `loadDocument` API to load a new document. You can connect it with your existing flows or pass URLs from your file storage. Make sure you have the [CORS configured](https://www.pdftron.com/documentation/web/faq/cors-support/) in case you run into any errors.
+In the code snippet, we are listening for any of the changes in `props` and then calling `loadDocument` API to load a new document. You can connect it with your existing flows or pass URLs from your file storage. Make sure you have the [CORS configured](https://docs.apryse.com/documentation/web/faq/cors-support/) in case you run into any errors.
 
 You can now customize the widget by checking out other guides we have available. Perform your customizations inside of `src/components/PDFViewer.tsx`. Do not forget to run `npm run dev` within the Widget's console or terminal and update the files in your App by pressing F4, or from the top menu bar selecting `Project > Synchronize Project Directory`.
 
-You can now checkout other guides like [how to open your own documents](https://www.pdftron.com/documentation/web/guides/basics/open/url/) or [how to disable certain features](https://www.pdftron.com/documentation/web/guides/hiding-elements/).
+You can now checkout other guides like [how to open your own documents](https://docs.apryse.com/documentation/web/guides/basics/open/url/) or [how to disable certain features](https://docs.apryse.com/documentation/web/guides/hiding-elements/).
 
 ## WebViewer APIs
 
-See [API documentation](https://www.pdftron.com/documentation/web/guides/ui/apis).
+See [API documentation](https://docs.apryse.com/api/web/WebViewerInstance.html).
 
 ## Support
 
-https://www.pdftron.com/form/trial-support/
+https://apryse.com/form/trial-support
 
 ## Contributing
 

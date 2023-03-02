@@ -4,7 +4,7 @@
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>WebViewer</name>
-    <description>PDFTron WebViewer is a pure client-side JavaScript library that lets you view, edit, and annotate documents and images right in your Mendix application: PDFTron WebViewer is the Mendix integration of PDFTron's industry-leading document SDK.</description>
+    <description>Apryse WebViewer is a pure client-side JavaScript library that lets you view, edit, and annotate documents and images right in your Mendix application: Apryse WebViewer is the Mendix integration of Apryse's industry-leading document SDK.</description>
     <icon/>
     <properties>
         <propertyGroup caption="General">
@@ -187,7 +187,7 @@
         <propertyGroup caption="License">
             <property key="l" type="string" required="false">
                 <caption>Key</caption>
-                <description>WebViewer license key. Please reach out to sales@pdftron.com for more information.</description>
+                <description>WebViewer license key. Please reach out to sales@apryse.com for more information.</description>
             </property>
         </propertyGroup>
     </properties>
