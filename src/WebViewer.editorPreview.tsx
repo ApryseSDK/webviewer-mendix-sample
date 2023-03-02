@@ -6,36 +6,16 @@ declare function require(name: string): string;
 
 export class preview extends Component<WebViewerPreviewProps> {
     render(): ReactNode {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const mx = window.mx;
         const viewerProps = {
-            containerHeight: this.props.containerHeight,
-            fileUrl: this.props.fileUrl,
-            fileUrlAttribute: this.props.fileUrlAttribute,
-            fileIdAttribute: this.props.fileIdAttribute,
-            enableFilePicker: this.props.enableFilePicker,
-            annotationUser: this.props.annotationUser,
-            accessibleMode: this.props.accessibleMode,
-            enableMeasurement: this.props.enableMeasurement,
-            enableRedaction: this.props.enableRedaction,
-            enableAnnotations: this.props.enableAnnotations,
-            xfdfAttribute: this.props.xfdfAttribute,
-            enableXfdfExportButton: this.props.enableXfdfExportButton,
-            enableAutoXfdfExport: this.props.enableAutoXfdfExport,
-            enableAutoXfdfImport: this.props.enableAutoXfdfImport,
-            loadAsPDF: this.props.loadAsPDF,
-            highContrastMode: this.props.highContrastMode,
-            notesInLeftPanel: this.props.notesInLeftPanel,
-            enabledElements: this.props.enabledElements,
-            disabledElements: this.props.disabledElements,
-            selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
+            ...this.props,
             isVisible: this.props.isVisible === "true",
-            enableDarkMode: this.props.enableDarkMode,
-            enableFullAPI: this.props.enableFullAPI,
-            customCss: this.props.customCss,
-            defaultLanguage: this.props.defaultLanguage,
-            l: this.props.l,
-            enableDocumentUpdates: this.props.enableDocumentUpdates,
-            enableSaveAsButton: this.props.enableSaveAsButton
+            mx
         };
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return <PDFViewer {...viewerProps} />;
     }
 }

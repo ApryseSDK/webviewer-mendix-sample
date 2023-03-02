@@ -1,9 +1,9 @@
 {
   "name": "webviewer",
   "widgetName": "WebViewer",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "My widget description",
-  "copyright": "2023 PDFTron",
+  "copyright": "2023 Apryse",
   "author": "Andrey Safonov",
   "config": {
     "projectPath": "../..//",
@@ -30,7 +30,7 @@
     "@types/react-dom": "~18.0.5"
   },
   "dependencies": {
-    "@pdftron/webviewer": "^8.11.0-20230209",
+    "@pdftron/webviewer": "^8.12.0-20230302",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21"
   }

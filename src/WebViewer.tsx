@@ -7,36 +7,14 @@ import "./ui/WebViewer.css";
 
 export default class WebViewer extends Component<WebViewerContainerProps> {
     render(): ReactNode {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const mx = window.mx;
         const viewerProps = {
-            containerHeight: this.props.containerHeight,
-            fileUrl: this.props.fileUrl,
-            fileUrlAttribute: this.props.fileUrlAttribute,
-            fileIdAttribute: this.props.fileIdAttribute,
-            enableFilePicker: this.props.enableFilePicker,
+            ...this.props,
             annotationUser: this.props.annotationUser?.value,
-            accessibleMode: this.props.accessibleMode,
-            enableMeasurement: this.props.enableMeasurement,
-            enableRedaction: this.props.enableRedaction,
-            enableAnnotations: this.props.enableAnnotations,
-            xfdfAttribute: this.props.xfdfAttribute,
-            enableXfdfExportButton: this.props.enableXfdfExportButton,
-            enableAutoXfdfExport: this.props.enableAutoXfdfExport,
-            enableAutoXfdfImport: this.props.enableAutoXfdfImport,
-            loadAsPDF: this.props.loadAsPDF,
-            highContrastMode: this.props.highContrastMode,
-            notesInLeftPanel: this.props.notesInLeftPanel,
-            enabledElements: this.props.enabledElements,
-            disabledElements: this.props.disabledElements,
-            selectAnnotationOnCreation: this.props.selectAnnotationOnCreation,
             isVisible: this.props.isVisible?.value,
-            enableDarkMode: this.props.enableDarkMode,
-            enableFullAPI: this.props.enableFullAPI,
-            customCss: this.props.customCss,
-            defaultLanguage: this.props.defaultLanguage,
-            l: this.props.l,
-            // Module props
-            enableDocumentUpdates: this.props.enableDocumentUpdates,
-            enableSaveAsButton: this.props.enableSaveAsButton
+            mx
         };
         return <PDFViewer {...viewerProps} />;
     }

@@ -30,25 +30,35 @@ export interface InputProps {
     customCss?: string;
     defaultLanguage: string;
     l?: string;
+    mx: any;
     enableDocumentUpdates?: boolean;
     enableSaveAsButton?: boolean;
+    continueAutoXfdfImport?: boolean;
+    autoXfdfImportInterval?: number;
 }
 
 const hasAttribute = (attribute: any): boolean => attribute && attribute.status === "available";
 
 const PDFViewer: React.FC<InputProps> = props => {
     const viewerRef = useRef<HTMLDivElement>(null);
-    const isDocumentLoadedRef: React.MutableRefObject<any> = useRef(false);
+    const moduleClientRef: React.MutableRefObject<WebViewerModuleClient> = useRef(new WebViewerModuleClient(props.mx));
+    const isDocumentLoadedRef: React.MutableRefObject<boolean> = useRef(false);
     const previousFileIdRef: React.MutableRefObject<any> = useRef(null);
     const currentFileIdRef: React.MutableRefObject<any> = useRef(null);
     const wvUIEventHandlers: React.MutableRefObject<any> = useRef({});
+    const autoImportRef: React.MutableRefObject<any> = useRef(null);
+    const previousXfdfRef: React.MutableRefObject<any> = useRef(null);
+    const syncedAnnotsRef: React.MutableRefObject<any[]> = useRef([]);
 
     const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
+
+    const moduleClient = moduleClientRef.current;
 
     // Perform clean-up of WV when unmounted
     useEffect(() => {
         return () => {
             if (wvInstance) {
+                clearInterval(autoImportRef.current);
                 // Disposing WV events
                 wvInstance.UI.dispose();
             }
@@ -60,20 +70,36 @@ const PDFViewer: React.FC<InputProps> = props => {
         if (wvInstance && wvUIEventHandlers.current) {
             const { Core, UI } = wvInstance;
 
+            const exportAnnotations = async (): Promise<string> => {
+                if (!wvInstance) {
+                    return "<xfdf />";
+                }
+                const { Core } = wvInstance;
+                const { Annotations, annotationManager } = Core;
+                const annotList = annotationManager
+                    .getAnnotationsList()
+                    .filter(annot => !(annot instanceof Annotations.Link && annot.isAutomaticLink()));
+                const xfdfString = await Core.annotationManager.exportAnnotations({
+                    annotList,
+                    fields: true,
+                    links: true,
+                    widgets: true
+                });
+
+                return xfdfString;
+            };
+
             wvUIEventHandlers.current.saveCurrentDocument = async () => {
                 const { Core, UI } = wvInstance;
                 // Send it merged with the document data to REST API to update
                 if (currentFileIdRef.current || props.fileIdAttribute) {
                     // Export annotation XFDF
-                    const xfdfString = await Core.annotationManager.exportAnnotations({
-                        fields: true,
-                        links: true,
-                        widgets: true
-                    });
+                    const xfdfString = await exportAnnotations();
+                    previousXfdfRef.current = xfdfString;
 
                     const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
-                    await WebViewerModuleClient.updateFile(
+                    await moduleClient.updateFile(
                         currentFileIdRef.current || props.fileIdAttribute.value || "",
                         fileData
                     );
@@ -97,15 +123,12 @@ const PDFViewer: React.FC<InputProps> = props => {
             };
             wvUIEventHandlers.current.saveAsDocument = async () => {
                 // Export annotation XFDF
-                const xfdfString = await Core.annotationManager.exportAnnotations({
-                    fields: true,
-                    links: true,
-                    widgets: true
-                });
+                const xfdfString = await exportAnnotations();
+                previousXfdfRef.current = xfdfString;
 
                 const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
-                const saveTask: any = WebViewerModuleClient.saveFile(fileData);
+                const saveTask: any = moduleClient.saveFile(fileData);
 
                 // Add minimum artificial delay to make it look like work is being done
                 // Otherwise, requests may complete too fast
@@ -128,20 +151,27 @@ const PDFViewer: React.FC<InputProps> = props => {
                 UI.closeElements(["loadingModal"]);
             };
             wvUIEventHandlers.current.updateXfdfAttribute = async (
-                _annotations: Event | any[],
+                annotations: any[],
                 _action: string,
-                info: any
+                _info: any
             ): Promise<void> => {
-                // Skip import events
-                if (info && info.imported) {
-                    return;
+                if (props.enableAutoXfdfExport && props.continueAutoXfdfImport) {
+                    let isSyncUpdate = true;
+                    if (annotations) {
+                        for (const annot of annotations) {
+                            if (!syncedAnnotsRef.current.includes(annot)) {
+                                isSyncUpdate = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (isSyncUpdate) {
+                        syncedAnnotsRef.current = [];
+                        return;
+                    }
                 }
-                const doc = Core.documentViewer.getDocument();
-                if (!doc) {
-                    return;
-                }
-
-                const xfdfString = await Core.annotationManager.exportAnnotations();
+                const xfdfString = await exportAnnotations();
+                previousXfdfRef.current = xfdfString;
                 // Update Mendix XFDF Attribute
                 props.xfdfAttribute.setValue(xfdfString);
             };
@@ -159,8 +189,58 @@ const PDFViewer: React.FC<InputProps> = props => {
                     wvUIEventHandlers.current.debouncedXfdfUpdate
                 );
             }
+            wvUIEventHandlers.current.autoImportXfdf = async (): Promise<void> => {
+                if (!wvInstance) {
+                    return;
+                }
+                const doc = wvInstance.Core.documentViewer.getDocument();
+                if (!doc) {
+                    return;
+                }
+                await doc.getDocumentCompletePromise();
+                moduleClient
+                    .getFileInfo(currentFileIdRef.current || props.fileIdAttribute.value || "")
+                    .then(async (fileInfo: any) => {
+                        if (fileInfo.xfdf) {
+                            if (fileInfo.xfdf === previousXfdfRef.current) {
+                                return;
+                            }
+                            // XFDF doesn't show what has been deleted
+                            const regex = /name="([a-zA-Z0-9-]+)"/gim;
+                            const incomingAnnots = [];
+                            let result;
+                            while ((result = regex.exec(fileInfo.xfdf))) {
+                                incomingAnnots.push(result[1]);
+                            }
+                            const annotList = [...Core.annotationManager.getAnnotationsList()];
+                            if (incomingAnnots.length > 0) {
+                                for (const id of incomingAnnots) {
+                                    const idIndex = annotList.findIndex(annot => annot.Id === id);
+                                    if (idIndex >= 0) {
+                                        annotList.splice(idIndex, 1);
+                                    }
+                                }
+                            }
+                            Core.annotationManager.deleteAnnotations(annotList, { source: "sync" });
+                            const importedAnnots = await Core.annotationManager.importAnnotations(fileInfo.xfdf);
+                            syncedAnnotsRef.current = importedAnnots;
+                            previousXfdfRef.current = fileInfo.xfdf;
+                        }
+                    })
+                    .catch(e => {
+                        console.error("Error while importing annotation changes", e);
+                        clearInterval(autoImportRef.current);
+                    });
+            };
         }
-    }, [wvInstance, props.fileIdAttribute, props.enableAutoXfdfExport, props.xfdfAttribute]);
+    }, [
+        wvInstance,
+        moduleClient,
+        props.enableAutoXfdfExport,
+        props.fileIdAttribute,
+        props.xfdfAttribute,
+        props.continueAutoXfdfImport
+    ]);
 
     // Mount WV only once
     useEffect(() => {
@@ -201,7 +281,7 @@ const PDFViewer: React.FC<InputProps> = props => {
             }
 
             // Check whether the backend module is available
-            WebViewerModuleClient.checkForModule().then(hasWebViewerModule => {
+            moduleClient.checkForModule().then(hasWebViewerModule => {
                 if (!hasWebViewerModule) {
                     return;
                 }
@@ -220,7 +300,11 @@ const PDFViewer: React.FC<InputProps> = props => {
                         header.push({
                             type: "actionButton",
                             title: "Save As",
-                            img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
+                            img: `<svg width="auto" height="auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.3439 12.2929C20.9534 11.9024 20.3202 11.9024 19.9297 12.2929L18.9611 13.2615L20.6786 14.979L21.6472 14.0104C22.0377 13.6199 22.0377 12.9867 21.6472 12.5962L21.3439 12.2929Z" fill="black"/>
+                            <path d="M19.5615 16.0961L17.844 14.3786L12.2584 19.9642L12 21.9401L13.9759 21.6817L19.5615 16.0961Z" fill="black"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.05087 21H4C2.897 21 2 20.103 2 19V5C2 3.897 2.897 3 4 3H15C15.266 3 15.52 3.105 15.707 3.293L19.707 7.293C19.895 7.48 20 7.735 20 8V10.0509L18.0003 12.0505L18 8.414L14.586 5H14V9H13H12H10H8H6V5H4V19H6V14C6 12.897 6.897 12 8 12H14C15.103 12 16 12.897 16 14V14.0509L14 16.0509V14H8V19H11.0509L9.05087 21ZM10 7H12V5H10V7Z" fill="black"/>
+                            </svg>`,
                             onClick: async () => wvUIEventHandlers.current.saveAsDocument()
                         });
                     }
@@ -246,6 +330,20 @@ const PDFViewer: React.FC<InputProps> = props => {
                         });
                     }
                 }
+
+                // Continue auto XFDF import after initial
+                if (
+                    props.continueAutoXfdfImport &&
+                    hasAttribute(props.fileIdAttribute) &&
+                    hasAttribute(props.xfdfAttribute)
+                ) {
+                    if (autoImportRef.current) {
+                        clearInterval(autoImportRef.current);
+                    }
+                    autoImportRef.current = setInterval(() => {
+                        wvUIEventHandlers.current.autoImportXfdf();
+                    }, props.autoXfdfImportInterval || 1000);
+                }
             });
 
             Core.documentViewer.addEventListener("documentLoaded", () => {
@@ -264,6 +362,7 @@ const PDFViewer: React.FC<InputProps> = props => {
             Core.documentViewer.setDocumentXFDFRetriever(async () => {
                 // Only auto import when we are loading from a file entity
                 if (currentFileIdRef.current && props.enableAutoXfdfImport && hasAttribute(props.xfdfAttribute)) {
+                    previousXfdfRef.current = props.xfdfAttribute.value;
                     return props.xfdfAttribute.value;
                 }
             });
