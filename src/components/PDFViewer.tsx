@@ -98,17 +98,14 @@ const PDFViewer: React.FC<InputProps> = props => {
             wvUIEventHandlers.current.saveCurrentDocument = async () => {
                 const { Core, UI } = wvInstance;
                 // Send it merged with the document data to REST API to update
-                if (currentFileIdRef.current || props.fileIdAttribute) {
+                if (currentFileIdRef.current) {
                     // Export annotation XFDF
                     const xfdfString = await exportAnnotations();
                     previousXfdfRef.current = xfdfString;
 
                     const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
 
-                    await moduleClient.updateFile(
-                        currentFileIdRef.current || props.fileIdAttribute.value || "",
-                        fileData
-                    );
+                    await moduleClient.updateFile(currentFileIdRef.current || "", fileData);
 
                     // Add minimum artificial delay to make it look like work is being done
                     // Otherwise, requests may complete too fast
@@ -160,6 +157,9 @@ const PDFViewer: React.FC<InputProps> = props => {
                 _action: string,
                 _info: any
             ): Promise<void> => {
+                if (!currentFileIdRef.current) {
+                    return;
+                }
                 if (props.enableAutoXfdfExport && props.continueAutoXfdfImport) {
                     let isSyncUpdate = true;
                     if (annotations) {
@@ -195,7 +195,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 );
             }
             wvUIEventHandlers.current.autoImportXfdf = async (): Promise<void> => {
-                if (!wvInstance) {
+                if (!wvInstance || !currentFileIdRef.current) {
                     return;
                 }
                 const doc = wvInstance.Core.documentViewer.getDocument();
@@ -204,7 +204,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 }
                 await doc.getDocumentCompletePromise();
                 moduleClient
-                    .getFileInfo(currentFileIdRef.current || props.fileIdAttribute.value || "")
+                    .getFileInfo(currentFileIdRef.current || "")
                     .then(async (fileInfo: any) => {
                         if (fileInfo.xfdf) {
                             if (fileInfo.xfdf === previousXfdfRef.current) {
@@ -238,14 +238,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                     });
             };
         }
-    }, [
-        wvInstance,
-        moduleClient,
-        props.enableAutoXfdfExport,
-        props.fileIdAttribute,
-        props.xfdfAttribute,
-        props.continueAutoXfdfImport
-    ]);
+    }, [wvInstance, moduleClient, props.enableAutoXfdfExport, props.xfdfAttribute, props.continueAutoXfdfImport]);
 
     // Mount WV only once
     useEffect(() => {
@@ -337,11 +330,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 }
 
                 // Continue auto XFDF import after initial
-                if (
-                    props.continueAutoXfdfImport &&
-                    hasAttribute(props.fileIdAttribute) &&
-                    hasAttribute(props.xfdfAttribute)
-                ) {
+                if (props.continueAutoXfdfImport && currentFileIdRef.current && hasAttribute(props.xfdfAttribute)) {
                     if (autoImportRef.current) {
                         clearInterval(autoImportRef.current);
                     }
@@ -390,6 +379,7 @@ const PDFViewer: React.FC<InputProps> = props => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [wvInstance, props.fileUrl]); // Ignore file URL attribute or it will cause the file to reload
 
+    // TODO: Deprecate in next major version 2
     useEffect(() => {
         // Set file ID for saving back to Mendix when ready
         if (wvInstance && hasAttribute(props.fileIdAttribute)) {
