@@ -13,16 +13,20 @@
                     <caption>URL</caption>
                     <description>Manually specify a URL to load from.</description>
                 </property>
+                <property key="file" type="file" required="false">
+                    <caption>File</caption>
+                    <description>A FileDocument type of entity.</description>
+                </property>
                 <property key="fileUrlAttribute" type="attribute" required="false">
                     <caption>Attribute (URL)</caption>
-                    <description>Load a file from an entity attribute.</description>
+                    <description>Load a file from an entity attribute. WILL BE DEPRECATED IN 2.0. Please use the file parameter.</description>
                     <attributeTypes>
                         <attributeType name="String"/>
                     </attributeTypes>
                 </property>
                 <property key="fileIdAttribute" type="attribute" required="false">
                     <caption>File ID</caption>
-                    <description>The Mendix file identifier. Used with WebViewer module for saving.</description>
+                    <description>The Mendix file identifier. Used with WebViewer module for saving. WILL BE DEPRECATED IN 2.0. Please use the file parameter.</description>
                     <attributeTypes>
                         <attributeType name="String"/>
                     </attributeTypes>

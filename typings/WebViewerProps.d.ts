@@ -4,7 +4,7 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
-import { EditableValue } from "mendix";
+import { DynamicValue, EditableValue, FileValue } from "mendix";
 
 export type DefaultLanguageEnum =
     | "en"
@@ -34,6 +34,7 @@ export interface WebViewerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     fileUrl: string;
+    file?: DynamicValue<FileValue>;
     fileUrlAttribute?: EditableValue<string>;
     fileIdAttribute?: EditableValue<string>;
     enableFilePicker: boolean;
@@ -75,6 +76,7 @@ export interface WebViewerPreviewProps {
     styleObject?: CSSProperties;
     readOnly: boolean;
     fileUrl: string;
+    file: string;
     fileUrlAttribute: string;
     fileIdAttribute: string;
     enableFilePicker: boolean;

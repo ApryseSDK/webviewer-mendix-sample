@@ -6,6 +6,7 @@ import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 export interface InputProps {
     containerHeight: string;
     fileUrl?: string;
+    file?: any;
     fileUrlAttribute?: any;
     fileIdAttribute?: any;
     enableFilePicker?: boolean;
@@ -53,6 +54,11 @@ const PDFViewer: React.FC<InputProps> = props => {
     const [wvInstance, setInstance] = useState<null | WebViewerInstance>(null);
 
     const moduleClient = moduleClientRef.current;
+
+    const swapFileIds = (nextFileId: string | null | undefined = null): void => {
+        previousFileIdRef.current = currentFileIdRef.current;
+        currentFileIdRef.current = nextFileId;
+    };
 
     // Perform clean-up of WV when unmounted
     useEffect(() => {
@@ -145,8 +151,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 await Promise.all([uiDelay, saveTask]);
 
                 const currentId = await saveTask;
-                previousFileIdRef.current = currentFileIdRef.current;
-                currentFileIdRef.current = currentId;
+                swapFileIds(currentId);
 
                 UI.closeElements(["loadingModal"]);
             };
@@ -348,15 +353,11 @@ const PDFViewer: React.FC<InputProps> = props => {
 
             Core.documentViewer.addEventListener("documentLoaded", () => {
                 isDocumentLoadedRef.current = true;
-                if (hasAttribute(props.fileIdAttribute)) {
-                    currentFileIdRef.current = props.fileIdAttribute?.value;
-                }
             });
 
             Core.documentViewer.addEventListener("documentUnloaded", () => {
                 isDocumentLoadedRef.current = false;
-                previousFileIdRef.current = currentFileIdRef.current;
-                currentFileIdRef.current = null;
+                swapFileIds();
             });
 
             Core.documentViewer.setDocumentXFDFRetriever(async () => {
@@ -373,11 +374,16 @@ const PDFViewer: React.FC<InputProps> = props => {
     useEffect(() => {
         // Load from attribute over plain string
         if (wvInstance) {
-            if (hasAttribute(props.fileUrlAttribute)) {
+            if (hasAttribute(props.file)) {
+                const url = new URLSearchParams(props.file.value.uri);
+                swapFileIds(url.get("guid"));
+                wvInstance.UI.loadDocument(props.file.value.uri, { filename: props.file.value.name });
+            } else if (hasAttribute(props.fileUrlAttribute)) {
+                const url = new URLSearchParams(props.fileUrlAttribute.value);
+                swapFileIds(url.get("guid"));
                 wvInstance.UI.loadDocument(props.fileUrlAttribute.value);
             } else if (props.fileUrl && !props.fileUrlAttribute) {
-                previousFileIdRef.current = currentFileIdRef.current;
-                currentFileIdRef.current = null;
+                swapFileIds();
                 wvInstance.UI.loadDocument(props.fileUrl);
             }
         }
@@ -387,8 +393,7 @@ const PDFViewer: React.FC<InputProps> = props => {
     useEffect(() => {
         // Set file ID for saving back to Mendix when ready
         if (wvInstance && hasAttribute(props.fileIdAttribute)) {
-            previousFileIdRef.current = currentFileIdRef.current;
-            currentFileIdRef.current = props.fileIdAttribute.value;
+            swapFileIds(props.fileIdAttribute.value);
         }
     }, [wvInstance, props.fileIdAttribute]);
 
