@@ -204,7 +204,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 moduleClient
                     .getFileInfo(currentFileIdRef.current || "")
                     .then(async (fileInfo: any) => {
-                        const linkRegex = /name="([a-zA-Z0-9-]+)"/gim;
+                        const linkRegex = /<link.+<\/link>/gim;
                         const incomingXfdfWithoutLinks = fileInfo.xfdf.replaceAll(linkRegex, "");
                         const previousXfdfWithoutLinks = previousXfdfRef.current.replaceAll(linkRegex, "");
                         if (fileInfo.xfdf && incomingXfdfWithoutLinks !== previousXfdfWithoutLinks) {
