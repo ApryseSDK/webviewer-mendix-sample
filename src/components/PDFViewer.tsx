@@ -162,12 +162,10 @@ const PDFViewer: React.FC<InputProps> = props => {
                 }
                 if (props.enableAutoXfdfExport && props.continueAutoXfdfImport) {
                     let isSyncUpdate = true;
-                    if (annotations) {
-                        for (const annot of annotations) {
-                            if (!syncedAnnotsRef.current.includes(annot)) {
-                                isSyncUpdate = false;
-                                break;
-                            }
+                    for (const annot of annotations) {
+                        if (!syncedAnnotsRef.current.includes(annot)) {
+                            isSyncUpdate = false;
+                            break;
                         }
                     }
                     if (isSyncUpdate) {
@@ -187,7 +185,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 );
                 wvUIEventHandlers.current.debouncedXfdfUpdate = debounce(
                     wvUIEventHandlers.current.updateXfdfAttribute,
-                    1000
+                    props.autoXfdfImportInterval || 1000
                 );
                 Core.annotationManager.addEventListener(
                     "annotationChanged",
@@ -206,10 +204,10 @@ const PDFViewer: React.FC<InputProps> = props => {
                 moduleClient
                     .getFileInfo(currentFileIdRef.current || "")
                     .then(async (fileInfo: any) => {
-                        if (fileInfo.xfdf) {
-                            if (fileInfo.xfdf === previousXfdfRef.current) {
-                                return;
-                            }
+                        const linkRegex = /name="([a-zA-Z0-9-]+)"/gim;
+                        const incomingXfdfWithoutLinks = fileInfo.xfdf.replaceAll(linkRegex, "");
+                        const previousXfdfWithoutLinks = previousXfdfRef.current.replaceAll(linkRegex, "");
+                        if (fileInfo.xfdf && incomingXfdfWithoutLinks !== previousXfdfWithoutLinks) {
                             // XFDF doesn't show what has been deleted
                             const regex = /name="([a-zA-Z0-9-]+)"/gim;
                             const incomingAnnots = [];
@@ -226,7 +224,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                                     }
                                 }
                             }
-                            Core.annotationManager.deleteAnnotations(annotList, { source: "sync" });
+                            Core.annotationManager.deleteAnnotations(annotList, { imported: true, source: "sync" });
                             const importedAnnots = await Core.annotationManager.importAnnotations(fileInfo.xfdf);
                             syncedAnnotsRef.current = importedAnnots;
                             previousXfdfRef.current = fileInfo.xfdf;
@@ -238,7 +236,14 @@ const PDFViewer: React.FC<InputProps> = props => {
                     });
             };
         }
-    }, [wvInstance, moduleClient, props.enableAutoXfdfExport, props.xfdfAttribute, props.continueAutoXfdfImport]);
+    }, [
+        wvInstance,
+        moduleClient,
+        props.enableAutoXfdfExport,
+        props.xfdfAttribute,
+        props.continueAutoXfdfImport,
+        props.autoXfdfImportInterval
+    ]);
 
     // Mount WV only once
     useEffect(() => {
