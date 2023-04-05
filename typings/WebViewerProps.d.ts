@@ -4,29 +4,9 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
-import { DynamicValue, EditableValue, FileValue } from "mendix";
+import { ActionValue, DynamicValue, EditableValue, FileValue } from "mendix";
 
-export type DefaultLanguageEnum =
-    | "en"
-    | "de"
-    | "es"
-    | "fr"
-    | "it"
-    | "el"
-    | "ja"
-    | "ko"
-    | "nl"
-    | "pt_br"
-    | "ru"
-    | "zh_cn"
-    | "zh_tw"
-    | "vi"
-    | "uk"
-    | "id"
-    | "ms"
-    | "bn"
-    | "hi"
-    | "tr";
+export type DefaultLanguageEnum = "en" | "de" | "es" | "fr" | "it" | "el" | "ja" | "ko" | "nl" | "pt_br" | "ru" | "zh_cn" | "zh_tw" | "vi" | "uk" | "id" | "ms" | "bn" | "hi" | "tr";
 
 export interface WebViewerContainerProps {
     name: string;
@@ -35,8 +15,6 @@ export interface WebViewerContainerProps {
     tabIndex?: number;
     fileUrl: string;
     file?: DynamicValue<FileValue>;
-    fileUrlAttribute?: EditableValue<string>;
-    fileIdAttribute?: EditableValue<string>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;
@@ -61,8 +39,9 @@ export interface WebViewerContainerProps {
     highContrastMode: boolean;
     enableDocumentUpdates: boolean;
     enableSaveAsButton: boolean;
-    continueAutoXfdfImport: boolean;
-    autoXfdfImportInterval: number;
+    enableRealTimeAnnotating: boolean;
+    onExportXfdfCommand?: ActionValue;
+    autoXfdfCommandImportInterval: number;
     l: string;
 }
 
@@ -77,8 +56,6 @@ export interface WebViewerPreviewProps {
     readOnly: boolean;
     fileUrl: string;
     file: string;
-    fileUrlAttribute: string;
-    fileIdAttribute: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
     enableFullAPI: boolean;
@@ -104,7 +81,8 @@ export interface WebViewerPreviewProps {
     highContrastMode: boolean;
     enableDocumentUpdates: boolean;
     enableSaveAsButton: boolean;
-    continueAutoXfdfImport: boolean;
-    autoXfdfImportInterval: number | null;
+    enableRealTimeAnnotating: boolean;
+    onExportXfdfCommand: {} | null;
+    autoXfdfCommandImportInterval: number | null;
     l: string;
 }
