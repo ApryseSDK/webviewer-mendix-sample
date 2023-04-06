@@ -28,6 +28,7 @@ export interface InputProps {
     enableFullAPI?: boolean;
     customCss?: string;
     defaultLanguage: string;
+    enableOfficeEditing?: boolean;
     l?: string;
     mx: any;
     enableDocumentUpdates?: boolean;
@@ -109,12 +110,8 @@ const PDFViewer: React.FC<InputProps> = props => {
                 const { Core, UI } = wvInstance;
                 // Send it merged with the document data to REST API to update
                 if (currentFileIdRef.current) {
-                    // Export annotation XFDF
-                    const xfdfString = await exportAnnotations();
-
-                    const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
-
-                    await moduleClient.updateFile(currentFileIdRef.current || "", fileData);
+                    // Show existing loading modal
+                    UI.openElements(["loadingModal"]);
 
                     // Add minimum artificial delay to make it look like work is being done
                     // Otherwise, requests may complete too fast
@@ -124,11 +121,21 @@ const PDFViewer: React.FC<InputProps> = props => {
                         }, 3000);
                     });
 
-                    // Show existing loading modal
-                    UI.openElements(["loadingModal"]);
+                    // Export annotation XFDF
+                    const xfdfString = await exportAnnotations();
 
-                    // Complete when one of them finish
-                    await Promise.all([uiDelay]);
+                    const fileData = await Core.documentViewer.getDocument().getFileData({ xfdfString });
+
+                    if (fileData) {
+                        await moduleClient.updateFile(currentFileIdRef.current || "", fileData);
+
+                        // Complete when one of them finish
+                        await Promise.all([uiDelay]);
+                    } else {
+                        console.warn(
+                            "Could not save document since there was no file data. This could have been due to an error or missing license key. Please refer to the console for details."
+                        );
+                    }
 
                     UI.closeElements(["loadingModal"]);
                 }
@@ -215,10 +222,12 @@ const PDFViewer: React.FC<InputProps> = props => {
                 lastQueryDateRef.current = new Date().toISOString();
             };
             if (props.enableRealTimeAnnotating) {
-                Core.annotationManager.removeEventListener(
-                    "annotationChanged",
-                    wvUIEventHandlers.current.debouncedXfdfCommandUpdate
-                );
+                if (wvUIEventHandlers.current.debouncedXfdfCommandUpdate) {
+                    Core.annotationManager.removeEventListener(
+                        "annotationChanged",
+                        wvUIEventHandlers.current.debouncedXfdfCommandUpdate
+                    );
+                }
                 wvUIEventHandlers.current.debouncedXfdfCommandUpdate = debounce(
                     wvUIEventHandlers.current.realtimeExportXfdfCommand,
                     props.autoXfdfCommandImportInterval || 1000
@@ -229,10 +238,12 @@ const PDFViewer: React.FC<InputProps> = props => {
                 );
             }
             if (props.enableAutoXfdfExport) {
-                Core.annotationManager.removeEventListener(
-                    "annotationChanged",
-                    wvUIEventHandlers.current.debouncedXfdfUpdate
-                );
+                if (wvUIEventHandlers.current.debouncedXfdfUpdate) {
+                    Core.annotationManager.removeEventListener(
+                        "annotationChanged",
+                        wvUIEventHandlers.current.debouncedXfdfUpdate
+                    );
+                }
                 wvUIEventHandlers.current.debouncedXfdfUpdate = debounce(
                     wvUIEventHandlers.current.updateXfdfAttribute,
                     1000
@@ -377,10 +388,13 @@ const PDFViewer: React.FC<InputProps> = props => {
             if (hasAttribute(props.file)) {
                 const url = new URLSearchParams(props.file.value.uri.split("?")[1]);
                 swapFileIds(url.get("guid"));
-                wvInstance.UI.loadDocument(props.file.value.uri, { filename: props.file.value.name });
+                wvInstance.UI.loadDocument(props.file.value.uri, {
+                    filename: props.file.value.name,
+                    enableOfficeEditing: props.enableOfficeEditing
+                });
             } else if (props.fileUrl) {
                 swapFileIds();
-                wvInstance.UI.loadDocument(props.fileUrl);
+                wvInstance.UI.loadDocument(props.fileUrl, { enableOfficeEditing: props.enableOfficeEditing });
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
