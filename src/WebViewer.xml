@@ -26,7 +26,11 @@
                     <description>Converts the loaded document to PDF after loading.</description>
                 </property>
             </propertyGroup>
-            <propertyGroup caption="Office">
+            <propertyGroup caption="Editing">
+                <property key="enablePdfEditing" type="boolean" defaultValue="false">
+                    <caption>Enable PDF editing</caption>
+                    <description>Enable editing of PDFs in WebViewer.</description>
+                </property>
                 <property key="enableOfficeEditing" type="boolean" defaultValue="false">
                     <caption>Enable Office editing</caption>
                     <description>Switches WebViewer to Office editing.</description>

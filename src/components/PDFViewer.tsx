@@ -28,6 +28,7 @@ export interface InputProps {
     enableFullAPI?: boolean;
     customCss?: string;
     defaultLanguage: string;
+    enablePdfEditing?: boolean;
     enableOfficeEditing?: boolean;
     l?: string;
     mx: any;
@@ -301,6 +302,12 @@ const PDFViewer: React.FC<InputProps> = props => {
                 UI.enableElements(props.enabledElements.split("\r\n"));
             }
 
+            // Toggling features
+            if (props.enablePdfEditing) {
+                UI.enableFeatures([UI.Feature.ContentEdit]);
+            } else {
+                UI.disableFeatures([UI.Feature.ContentEdit]);
+            }
             // Check whether the backend module is available
             moduleClient.checkForModule().then(hasWebViewerModule => {
                 if (!hasWebViewerModule) {

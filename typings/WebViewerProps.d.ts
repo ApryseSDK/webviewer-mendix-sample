@@ -37,6 +37,7 @@ export interface WebViewerContainerProps {
     file?: DynamicValue<FileValue>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
     enableFullAPI: boolean;
     annotationUser?: EditableValue<string>;
@@ -79,6 +80,7 @@ export interface WebViewerPreviewProps {
     file: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
     enableFullAPI: boolean;
     annotationUser: string;
