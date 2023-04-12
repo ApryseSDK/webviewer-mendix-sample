@@ -17,20 +17,6 @@
                     <caption>File</caption>
                     <description>A FileDocument type of entity.</description>
                 </property>
-                <property key="fileUrlAttribute" type="attribute" required="false">
-                    <caption>Attribute (URL)</caption>
-                    <description>Load a file from an entity attribute. WILL BE DEPRECATED IN 2.0. Please use the file parameter.</description>
-                    <attributeTypes>
-                        <attributeType name="String"/>
-                    </attributeTypes>
-                </property>
-                <property key="fileIdAttribute" type="attribute" required="false">
-                    <caption>File ID</caption>
-                    <description>The Mendix file identifier. Used with WebViewer module for saving. WILL BE DEPRECATED IN 2.0. Please use the file parameter.</description>
-                    <attributeTypes>
-                        <attributeType name="String"/>
-                    </attributeTypes>
-                </property>
                 <property key="enableFilePicker" type="boolean" defaultValue="false">
                     <caption>Show file picker</caption>
                     <description>Allow users to load their own local files.</description>
@@ -38,6 +24,16 @@
                 <property key="loadAsPDF" type="boolean" defaultValue="false">
                     <caption>Load as PDF</caption>
                     <description>Converts the loaded document to PDF after loading.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Editing">
+                <property key="enablePdfEditing" type="boolean" defaultValue="false">
+                    <caption>Enable PDF editing</caption>
+                    <description>Enable editing of PDFs in WebViewer.</description>
+                </property>
+                <property key="enableOfficeEditing" type="boolean" defaultValue="false">
+                    <caption>Enable Office editing</caption>
+                    <description>Switches WebViewer to Office editing.</description>
                 </property>
             </propertyGroup>
             <propertyGroup caption="Other">
@@ -97,7 +93,7 @@
                 </property>
                 <property key="enableAutoXfdfImport" type="boolean" defaultValue="false">
                     <caption>Enable Auto XFDF Import</caption>
-                    <description>Enable automatic importing of the annotation XFDF when the document loads.</description>
+                    <description>Enable automatic importing of the annotation XFDF when the document loads. Occurs only once on document load.</description>
                 </property>
             </propertyGroup>
         </propertyGroup>
@@ -171,22 +167,30 @@
             </property>
         </propertyGroup>
         <propertyGroup caption="Module">
-            <property key="enableDocumentUpdates" type="boolean" defaultValue="true">
-                <caption>Enable document updates</caption>
-                <description>Adds a button to the header to allow updating the document on the server (annotations, links, widgets). Requires WebViewer module.</description>
-            </property>
-            <property key="enableSaveAsButton" type="boolean" defaultValue="true">
-                <caption>Enable save as</caption>
-                <description>Adds a button to the header to allow saving a document to the server as a new file. Requires WebViewer module.</description>
-            </property>
-            <property key="continueAutoXfdfImport" type="boolean" defaultValue="false">
-                <caption>Continue Auto XFDF Import</caption>
-                <description>Continue to import XFDF from the server. This achieves real-time updates at specific intervals. Requires WebViewer module.</description>
-            </property>
-            <property key="autoXfdfImportInterval" type="integer" defaultValue="1000">
-                <caption>Auto Import Interval</caption>
-                <description>The interval in milliseconds to get XFDF updates from the server for the current file.</description>
-            </property>
+            <propertyGroup caption="Document Updates">
+                <property key="enableDocumentUpdates" type="boolean" defaultValue="true">
+                    <caption>Enable document updates</caption>
+                    <description>Adds a button to the header to allow updating the document on the server (annotations, links, widgets). Requires WebViewer module.</description>
+                </property>
+                <property key="enableSaveAsButton" type="boolean" defaultValue="true">
+                    <caption>Enable save as</caption>
+                    <description>Adds a button to the header to allow saving a document to the server as a new file. Requires WebViewer module.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Real-Time Annotating">
+                <property key="enableRealTimeAnnotating" type="boolean" defaultValue="false">
+                    <caption>Enable Real-time Annotating</caption>
+                    <description>Annotate in real-time with other users without an additional server. This will make polling requests.</description>
+                </property>
+                <property key="onExportXfdfCommand" type="action" required="false">
+                    <caption>On export XFDF command</caption>
+                    <description>Trigger an action when exporting annotations to XFDF commands. This can occur multiple files.</description>
+                </property>
+                <property key="autoXfdfCommandImportInterval" type="integer" defaultValue="1000">
+                    <caption>Auto Import Interval</caption>
+                    <description>The interval in milliseconds to get XFDF updates from the server for the current file.</description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="License">
             <property key="l" type="string" required="false">

@@ -1412,7 +1412,7 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@mendix/pluggable-widgets-tools@^9.13.2":
+"@mendix/pluggable-widgets-tools@^9.20.0":
   "integrity" "sha512-0f7UPRYkgeSTAqQDjvc3CnZDprMzQhlkrS3/lLSH0jepFyHtOAUzyUZUB5BKfpfjuOKHEtpUxFJGDuH87Ol0Sw=="
   "resolved" "https://registry.npmjs.org/@mendix/pluggable-widgets-tools/-/pluggable-widgets-tools-9.20.0.tgz"
   "version" "9.20.0"
@@ -1517,8 +1517,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
-"@pdftron/webviewer@^8.12.0-20230302":
-  "version" "8.12.0"
+"@pdftron/webviewer@^10.0.0-20230412":
+  "integrity" "sha512-PD9xqNmdXt87H3wJwBtGOG3oy1ZfXElyt7cpe0pTMb+w94EG/F57sfAblHjBrdmCCld4hxYGkb9VOFbOaoC/Rg=="
+  "resolved" "https://registry.npmjs.org/@pdftron/webviewer/-/webviewer-10.0.0.tgz"
+  "version" "10.0.0"
 
 "@prettier/plugin-xml@^1.2.0":
   "integrity" "sha512-bFvVAZKs59XNmntYjyefn3K4TBykS6E+d6ZW8IcylAs88ZO+TzLhp0dPpi0VKfPzq1Nb+kpDnPRTiwb4zY6NgA=="

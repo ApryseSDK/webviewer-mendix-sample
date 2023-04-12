@@ -4,7 +4,7 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
-import { DynamicValue, EditableValue, FileValue } from "mendix";
+import { ActionValue, DynamicValue, EditableValue, FileValue } from "mendix";
 
 export type DefaultLanguageEnum =
     | "en"
@@ -35,10 +35,10 @@ export interface WebViewerContainerProps {
     tabIndex?: number;
     fileUrl: string;
     file?: DynamicValue<FileValue>;
-    fileUrlAttribute?: EditableValue<string>;
-    fileIdAttribute?: EditableValue<string>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enablePdfEditing: boolean;
+    enableOfficeEditing: boolean;
     enableFullAPI: boolean;
     annotationUser?: EditableValue<string>;
     enableAnnotations: boolean;
@@ -61,8 +61,9 @@ export interface WebViewerContainerProps {
     highContrastMode: boolean;
     enableDocumentUpdates: boolean;
     enableSaveAsButton: boolean;
-    continueAutoXfdfImport: boolean;
-    autoXfdfImportInterval: number;
+    enableRealTimeAnnotating: boolean;
+    onExportXfdfCommand?: ActionValue;
+    autoXfdfCommandImportInterval: number;
     l: string;
 }
 
@@ -77,10 +78,10 @@ export interface WebViewerPreviewProps {
     readOnly: boolean;
     fileUrl: string;
     file: string;
-    fileUrlAttribute: string;
-    fileIdAttribute: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
+    enablePdfEditing: boolean;
+    enableOfficeEditing: boolean;
     enableFullAPI: boolean;
     annotationUser: string;
     enableAnnotations: boolean;
@@ -104,7 +105,8 @@ export interface WebViewerPreviewProps {
     highContrastMode: boolean;
     enableDocumentUpdates: boolean;
     enableSaveAsButton: boolean;
-    continueAutoXfdfImport: boolean;
-    autoXfdfImportInterval: number | null;
+    enableRealTimeAnnotating: boolean;
+    onExportXfdfCommand: {} | null;
+    autoXfdfCommandImportInterval: number | null;
     l: string;
 }
