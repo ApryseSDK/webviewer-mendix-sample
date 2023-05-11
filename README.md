@@ -143,10 +143,6 @@ See [API documentation](https://docs.apryse.com/api/web/WebViewerInstance.html).
 
 https://apryse.com/form/trial-support
 
-## Contributing
-
-See [contributing](./CONTRIBUTING.md).
-
 ## License
 
 See [license](./LICENSE).
