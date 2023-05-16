@@ -25,6 +25,10 @@
                     <caption>Load as PDF</caption>
                     <description>Converts the loaded document to PDF after loading.</description>
                 </property>
+                <property key="allowPageExtraction" type="boolean" defaultValue="false">
+                    <caption>Allow page extraction</caption>
+                    <description>Enable page extraction so that users can select which pages they want to save to another file.</description>
+                </property>
             </propertyGroup>
             <propertyGroup caption="Editing">
                 <property key="enablePdfEditing" type="boolean" defaultValue="false">
