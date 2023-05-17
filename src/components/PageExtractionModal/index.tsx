@@ -7,8 +7,74 @@ interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
 }
 
-class PageExtractionModal extends React.Component<PageExtractionModalInputProps> {
-    renderThumbnail = (pageNumber: number) => {
+interface PageExtractionModalState {
+    pageInput: string;
+}
+
+class PageExtractionModal extends React.Component<PageExtractionModalInputProps, PageExtractionModalState> {
+    private _timeoutHandle: any;
+    constructor(props: PageExtractionModalInputProps) {
+        super(props);
+        this.state = {
+            pageInput: "1"
+        };
+    }
+    onPageInputChanged = (e: any) => {
+        this.setState({
+            pageInput: e.target.value || "1"
+        });
+        if (this._timeoutHandle) {
+            clearTimeout(this._timeoutHandle);
+        }
+        this._timeoutHandle = setTimeout(() => {
+            this.setState({
+                pageInput: this.parsePageInputString(this.state.pageInput)
+            });
+        }, 1000);
+    };
+    parsePageInputString = (input: string) => {
+        if (!input) {
+            return "1";
+        }
+        const numPages = this.props.wvInstance.Core.documentViewer.getDocument().getPageCount();
+        const parts = input
+            .split(",")
+            .map(input => input.replace(/[a-zA-Z]+/, "").trim())
+            .sort();
+        const sanitizedParts = parts.reduce((acc: string[], part: string | undefined | null): string[] => {
+            if (!part || part.startsWith("-")) {
+                return acc;
+            }
+            const rangeParts = part.split("-").sort();
+            let finalPart = part;
+            const isRange = rangeParts.length === 2;
+            if (isRange) {
+                let lower = rangeParts[0];
+                let upper = rangeParts[1];
+                if (lower > upper) {
+                    const temp = lower;
+                    lower = upper;
+                    upper = temp;
+                    finalPart = `${lower}-${upper}`;
+                } else if (lower === upper) {
+                    finalPart = lower;
+                }
+                if (Number(lower) > numPages || Number(lower) < 1 || Number(upper) > numPages || Number(upper) < 1) {
+                    return acc;
+                }
+            } else {
+                if (Number(rangeParts[0]) > numPages || Number(rangeParts[0]) < 1) {
+                    return acc;
+                }
+                finalPart = rangeParts[0];
+            }
+            acc.push(finalPart);
+            return acc;
+        }, []);
+
+        return sanitizedParts.join(",");
+    };
+    loadThumbnail = (pageNumber: number) => {
         return <PageExtractionThumbnail wvInstance={this.props.wvInstance} pageNumber={pageNumber} />;
     };
     render(): JSX.Element {
@@ -28,12 +94,18 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps>
                         <VirtualList
                             height="400px"
                             numItems={7}
-                            render={this.renderThumbnail}
+                            render={this.loadThumbnail}
                             items={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
                         />
                         <div style={{ margin: "1em" }}>
                             <span>Pages:</span>
-                            <input type="text" style={{ height: "28px", marginTop: "10px" }} />
+                            <input
+                                type="text"
+                                style={{ height: "28px", marginTop: "10px" }}
+                                defaultValue={this.state.pageInput}
+                                value={this.state.pageInput}
+                                onChange={this.onPageInputChanged}
+                            />
                         </div>
                     </div>
                     <div className="footer">
