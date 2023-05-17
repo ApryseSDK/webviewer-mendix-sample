@@ -6,8 +6,6 @@ interface VirtualListInputProps {
     numItems: number;
     render: any;
     height: string | number;
-    itemStyle?: any;
-    itemHoverStyle?: any;
 }
 
 class VirtualList extends React.Component<VirtualListInputProps> {
@@ -17,7 +15,6 @@ class VirtualList extends React.Component<VirtualListInputProps> {
         this.scrollContainerRef = React.createRef();
     }
     render(): JSX.Element {
-        const { itemStyle, itemHoverStyle } = this.props;
         return (
             <div
                 ref={this.scrollContainerRef}
@@ -31,15 +28,7 @@ class VirtualList extends React.Component<VirtualListInputProps> {
                 }}
             >
                 {this.props.items.map((item, i) => (
-                    <ListItem
-                        key={i}
-                        item={item}
-                        render={this.props.render}
-                        isVisible
-                        ref={undefined}
-                        style={itemStyle}
-                        hoverStyle={itemHoverStyle}
-                    />
+                    <ListItem key={i} item={item} render={this.props.render} isVisible ref={undefined} />
                 ))}
             </div>
         );
