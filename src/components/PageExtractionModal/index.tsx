@@ -1,7 +1,6 @@
 import React, { createElement } from "react";
 import type { WebViewerInstance } from "@pdftron/webviewer";
 import VirtualList from "./VirtualList";
-import { ListItemStyle } from "./PageExtractionModalStyles";
 
 interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
@@ -50,8 +49,9 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
         return new Promise(res => {
             this.state.wvInstance.Core.documentViewer.getDocument().loadThumbnail(pageNumber, (thumbnail: any) => {
                 res(
-                    <div style={ListItemStyle}>
+                    <div style={{ display: "inline-block", boxShadow: "1px 1px 5px black", position: "relative" }}>
                         <img src={thumbnail.toDataURL()} />
+                        <input type="checkbox" style={{ position: "absolute", top: 0, left: 0 }} />
                     </div>
                 );
             });

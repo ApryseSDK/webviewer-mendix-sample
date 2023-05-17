@@ -29,7 +29,14 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         if (!this.props.isVisible || !this.state.shouldRenderItem) {
             return <></>;
         }
-        return <span ref={this.props.ref}>{this.state.renderTarget}</span>;
+        return (
+            <div
+                ref={this.props.ref}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", margin: "0.5em 0px" }}
+            >
+                {this.state.renderTarget}
+            </div>
+        );
     }
 }
 
