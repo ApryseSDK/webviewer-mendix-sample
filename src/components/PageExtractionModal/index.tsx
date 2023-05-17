@@ -1,6 +1,7 @@
 import React, { createElement } from "react";
 import type { WebViewerInstance } from "@pdftron/webviewer";
 import VirtualList from "./VirtualList";
+import { ListItemHoverStyle, ListItemStyle } from "./PageExtractionModalStyles";
 
 interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
@@ -77,6 +78,8 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                             numItems={7}
                             render={this.loadThumbnail}
                             items={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+                            itemStyle={ListItemStyle}
+                            itemHoverStyle={ListItemHoverStyle}
                         />
                         <div style={{ margin: "1em" }}>
                             <span>Pages:</span>
