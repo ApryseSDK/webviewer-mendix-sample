@@ -1,5 +1,7 @@
 import React, { createElement } from "react";
 import type { WebViewerInstance } from "@pdftron/webviewer";
+import VirtualList from "./VirtualList";
+import { ListItemStyle } from "./PageExtractionModalStyles";
 
 interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
@@ -45,36 +47,45 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
         });
     };
     loadThumbnail = (pageNumber: number) => {
-        const { thumbnailCache } = this.state;
-        this.state.wvInstance.Core.documentViewer.getDocument().loadThumbnail(pageNumber, (thumbnail: any) => {
-            this.setState({
-                thumbnailCache: {
-                    ...thumbnailCache,
-                    [pageNumber]: thumbnail.toDataURL()
-                }
+        return new Promise(res => {
+            this.state.wvInstance.Core.documentViewer.getDocument().loadThumbnail(pageNumber, (thumbnail: any) => {
+                res(
+                    <div style={ListItemStyle}>
+                        <img src={thumbnail.toDataURL()} />
+                    </div>
+                );
             });
         });
     };
     render(): JSX.Element {
-        const { currentPage, pageCount, thumbnailCache } = this.state;
+        // const { currentPage, pageCount } = this.state;
         return (
             <div className="Modal WarningModal">
                 <div className="container">
                     <div className="header">Page Extraction</div>
-                    <div className="body" style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
-                        <div>
-                            <div>
-                                <img src={thumbnailCache[currentPage]} />
-                            </div>
-                            <div>{`${currentPage}/${pageCount}`}</div>
-                        </div>
-                        <div>
+                    <div
+                        className="body"
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "100%",
+                            justifyContent: "space-between"
+                        }}
+                    >
+                        <VirtualList
+                            height="400px"
+                            numItems={7}
+                            render={this.loadThumbnail}
+                            items={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+                        />
+                        <div style={{ margin: "1em" }}>
                             <span>Pages:</span>
                             <input type="text" style={{ height: "28px", marginTop: "10px" }} />
                         </div>
                     </div>
                     <div className="footer">
-                        <div className="Button cancel modal-button">Download</div>
+                        <div className="Button cancel modal-button">Cancel</div>
+                        <div className="Button modal-button">Download</div>
                         <div className="Button modal-button">Save to Mendix</div>
                     </div>
                 </div>
