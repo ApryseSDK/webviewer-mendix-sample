@@ -1,5 +1,5 @@
 import React, { createElement, useRef, useEffect, useState } from "react";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import viewer, { WebViewerInstance } from "@pdftron/webviewer";
 import WebViewerModuleClient from "../clients/WebViewerModuleClient";
 import PageExtractionModal from "./PageExtractionModal";
