@@ -23,10 +23,15 @@ class PageExtractionThumbnail extends React.Component<PageExtractionThumbnailInp
         super(props);
         this.props.wvInstance.Core.documentViewer
             .getDocument()
-            .loadThumbnail(this.props.pageNumber, (thumbnailCanvas: HTMLCanvasElement) => {
-                this.setState({
-                    thumbnail: thumbnailCanvas.toDataURL()
-                });
+            .getDocumentCompletePromise()
+            .then(() => {
+                this.props.wvInstance.Core.documentViewer
+                    .getDocument()
+                    .loadThumbnail(this.props.pageNumber, (thumbnailCanvas: HTMLCanvasElement) => {
+                        this.setState({
+                            thumbnail: thumbnailCanvas.toDataURL()
+                        });
+                    });
             });
         this.state = {
             thumbnail: undefined,

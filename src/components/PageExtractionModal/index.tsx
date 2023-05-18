@@ -5,10 +5,12 @@ import PageExtractionThumbnail from "./PageExtractionThumbnail";
 
 interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
+    dataElement: string;
 }
 
 interface PageExtractionModalState {
     pageInput: string;
+    pageCount: number[];
 }
 
 class PageExtractionModal extends React.Component<PageExtractionModalInputProps, PageExtractionModalState> {
@@ -17,10 +19,32 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
     constructor(props: PageExtractionModalInputProps) {
         super(props);
         this._thumbnailSubscriptions = {};
+        const doc = this.props.wvInstance.Core.documentViewer.getDocument();
         this.state = {
-            pageInput: "1"
+            pageInput: "1",
+            pageCount: doc ? Array.from({ length: doc.getPageCount() }, (_, index) => index + 1) : []
         };
     }
+    componentDidMount(): void {
+        this.props.wvInstance.Core.documentViewer.addEventListener("documentLoaded", this.onDocumentLoaded);
+        this.props.wvInstance.Core.documentViewer.addEventListener("documentUnloaded", this.onDocumentUnloaded);
+    }
+    componentWillUnmount(): void {
+        this.props.wvInstance.Core.documentViewer.removeEventListener("documentLoaded", this.onDocumentLoaded);
+        this.props.wvInstance.Core.documentViewer.removeEventListener("documentUnloaded", this.onDocumentUnloaded);
+    }
+    onDocumentLoaded = () => {
+        this.setState({
+            pageInput: "1",
+            pageCount: Array.from(
+                { length: this.props.wvInstance.Core.documentViewer.getDocument().getPageCount() },
+                (_, index) => index + 1
+            )
+        });
+    };
+    onDocumentUnloaded = () => {
+        this.setState({ pageInput: "1", pageCount: [] });
+    };
     onPageInputChanged = (e: any) => {
         this.setState({
             pageInput: e.target.value || "1"
@@ -125,6 +149,9 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             />
         );
     };
+    onCancel = () => {
+        this.props.wvInstance.UI.closeElements([this.props.dataElement]);
+    };
     render(): JSX.Element {
         return (
             <div className="Modal WarningModal">
@@ -155,15 +182,17 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                         </div>
                         <VirtualList
                             height="400px"
-                            numItems={7}
+                            numItems={9}
                             render={this.loadThumbnail}
-                            items={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+                            items={this.state.pageCount}
                         />
                     </div>
                     <div className="footer">
-                        <div className="Button cancel modal-button">Cancel</div>
-                        <div className="Button modal-button">Download</div>
-                        <div className="Button modal-button">Save to Mendix</div>
+                        <div className="Button cancel modal-button" onClick={this.onCancel}>
+                            Cancel
+                        </div>
+                        <div className="Button confirm modal-button">Download</div>
+                        <div className="Button confirm modal-button">Save to Mendix</div>
                     </div>
                 </div>
             </div>
