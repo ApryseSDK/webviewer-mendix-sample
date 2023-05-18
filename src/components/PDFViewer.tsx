@@ -316,7 +316,7 @@ const PDFViewer: React.FC<InputProps> = props => {
                 UI.addCustomModal({
                     dataElement,
                     render: (): any => {
-                        return <PageExtractionModal wvInstance={instance} />;
+                        return <PageExtractionModal wvInstance={instance} dataElement={dataElement} />;
                     },
                     header: undefined,
                     body: undefined,
