@@ -141,13 +141,17 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                     >
                         <div style={{ margin: "1em" }}>
                             <span>Pages: </span>
-                            <input
-                                type="text"
-                                style={{ height: "28px" }}
-                                defaultValue={this.state.pageInput}
-                                value={this.state.pageInput}
-                                onChange={this.onPageInputChanged}
-                            />
+                            <div style={{ display: "flex", flexDirection: "column", marginTop: "0.5em" }}>
+                                <input
+                                    type="text"
+                                    style={{ height: "28px" }}
+                                    placeholder="e.g. 1,3-5,9,2,7-8"
+                                    defaultValue={this.state.pageInput}
+                                    value={this.state.pageInput}
+                                    onChange={this.onPageInputChanged}
+                                />
+                                <span style={{ color: "#868e96" }}>e.g. 1,3-5,9,2,7-8</span>
+                            </div>
                         </div>
                         <VirtualList
                             height="400px"
