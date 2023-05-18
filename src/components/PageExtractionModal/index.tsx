@@ -13,8 +13,10 @@ interface PageExtractionModalState {
 
 class PageExtractionModal extends React.Component<PageExtractionModalInputProps, PageExtractionModalState> {
     private _timeoutHandle: any;
+    private _thumbnailSubscriptions: any;
     constructor(props: PageExtractionModalInputProps) {
         super(props);
+        this._thumbnailSubscriptions = {};
         this.state = {
             pageInput: "1"
         };
@@ -27,9 +29,9 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             clearTimeout(this._timeoutHandle);
         }
         this._timeoutHandle = setTimeout(() => {
-            this.setState({
-                pageInput: this.parsePageInputString(this.state.pageInput)
-            });
+            const parsedInput = this.parsePageInputString(this.state.pageInput);
+            this.setState({ pageInput: parsedInput });
+            this.trigger(parsedInput);
         }, 1000);
     };
     parsePageInputString = (input: string) => {
@@ -74,8 +76,45 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
 
         return sanitizedParts.join(",");
     };
+    subscribe = (pageNumber: number, handler: any) => {
+        const numPages = this.props.wvInstance.Core.documentViewer.getDocument().getPageCount();
+        if (!pageNumber || pageNumber > numPages || !handler) {
+            return;
+        }
+        if (!this._thumbnailSubscriptions[pageNumber]) {
+            this._thumbnailSubscriptions[pageNumber] = [];
+        }
+        this._thumbnailSubscriptions[pageNumber].push(handler);
+    };
+    unsubscribe = (pageNumber: number, handler: any) => {
+        const numPages = this.props.wvInstance.Core.documentViewer.getDocument().getPageCount();
+        if (!pageNumber || pageNumber > numPages || !handler) {
+            return;
+        }
+        this._thumbnailSubscriptions[pageNumber] = this._thumbnailSubscriptions[pageNumber].reduce(
+            (acc: any[], registeredHandler: any) => {
+                if (registeredHandler !== handler) {
+                    acc.push(registeredHandler);
+                }
+                return acc;
+            },
+            []
+        );
+    };
+    trigger = (input: string) => {
+        Object.values(this._thumbnailSubscriptions).forEach((handlers: any[]) =>
+            handlers.forEach(handler => handler(input))
+        );
+    };
     loadThumbnail = (pageNumber: number) => {
-        return <PageExtractionThumbnail wvInstance={this.props.wvInstance} pageNumber={pageNumber} />;
+        return (
+            <PageExtractionThumbnail
+                wvInstance={this.props.wvInstance}
+                pageNumber={pageNumber}
+                addFileInputEventListener={this.subscribe}
+                removeFileInputEventListener={this.unsubscribe}
+            />
+        );
     };
     render(): JSX.Element {
         return (
