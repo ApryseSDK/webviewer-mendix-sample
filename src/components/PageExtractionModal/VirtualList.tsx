@@ -20,7 +20,7 @@ class VirtualList extends React.Component<VirtualListInputProps> {
                 ref={this.scrollContainerRef}
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
+                    gridTemplateColumns: "1fr 1fr 1fr",
                     gridTemplateRows: "1fr",
                     width: "100%",
                     overflow: "auto",

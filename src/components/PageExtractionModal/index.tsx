@@ -39,10 +39,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             return "1";
         }
         const numPages = this.props.wvInstance.Core.documentViewer.getDocument().getPageCount();
-        const parts = input
-            .split(",")
-            .map(input => input.replace(/[a-zA-Z]+/, "").trim())
-            .sort();
+        const parts = input.split(",").map(input => input.replace(/[a-zA-Z]+/, "").trim());
         const sanitizedParts = parts.reduce((acc: string[], part: string | undefined | null): string[] => {
             if (!part || part.startsWith("-")) {
                 return acc;
@@ -125,27 +122,27 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                         className="body"
                         style={{
                             display: "flex",
-                            flexDirection: "row",
+                            flexDirection: "column",
                             width: "100%",
                             justifyContent: "space-between"
                         }}
                     >
+                        <div style={{ margin: "1em" }}>
+                            <span>Pages: </span>
+                            <input
+                                type="text"
+                                style={{ height: "28px" }}
+                                defaultValue={this.state.pageInput}
+                                value={this.state.pageInput}
+                                onChange={this.onPageInputChanged}
+                            />
+                        </div>
                         <VirtualList
                             height="400px"
                             numItems={7}
                             render={this.loadThumbnail}
                             items={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
                         />
-                        <div style={{ margin: "1em" }}>
-                            <span>Pages:</span>
-                            <input
-                                type="text"
-                                style={{ height: "28px", marginTop: "10px" }}
-                                defaultValue={this.state.pageInput}
-                                value={this.state.pageInput}
-                                onChange={this.onPageInputChanged}
-                            />
-                        </div>
                     </div>
                     <div className="footer">
                         <div className="Button cancel modal-button">Cancel</div>
