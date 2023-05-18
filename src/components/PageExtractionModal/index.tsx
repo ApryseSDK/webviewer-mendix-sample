@@ -1,11 +1,15 @@
 import React, { createElement } from "react";
 import type { WebViewerInstance } from "@pdftron/webviewer";
+import type WebViewerModuleClient from "../../clients/WebViewerModuleClient";
 import VirtualList from "./VirtualList";
 import PageExtractionThumbnail from "./PageExtractionThumbnail";
 
 interface PageExtractionModalInputProps {
     wvInstance: WebViewerInstance;
+    moduleClient: WebViewerModuleClient;
     dataElement: string;
+    allowDownload: boolean;
+    allowSaveAs: boolean;
 }
 
 interface PageExtractionModalState {
@@ -16,9 +20,11 @@ interface PageExtractionModalState {
 class PageExtractionModal extends React.Component<PageExtractionModalInputProps, PageExtractionModalState> {
     private _timeoutHandle: any;
     private _thumbnailSubscriptions: any;
+    private _downloadRef: any;
     constructor(props: PageExtractionModalInputProps) {
         super(props);
         this._thumbnailSubscriptions = {};
+        this._downloadRef = React.createRef();
         const doc = this.props.wvInstance.Core.documentViewer.getDocument();
         this.state = {
             pageInput: "1",
@@ -108,6 +114,22 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
 
         return sanitizedParts.join(",");
     };
+    stringToPageArray = (input: string): number[] => {
+        const parts = input.split(",");
+        const pages: number[] = [];
+        parts.forEach((part: string) => {
+            const rangeParts = part.split("-").sort();
+            const isRange = rangeParts.length === 2;
+            if (isRange) {
+                const lower = Number(rangeParts[0]);
+                const upper = Number(rangeParts[1]);
+                Array.from({ length: upper - lower + 1 }, (_, index) => pages.push(index + lower));
+            } else {
+                pages.push(Number(part));
+            }
+        });
+        return pages;
+    };
     subscribe = (pageNumber: number, handler: any) => {
         const numPages = this.props.wvInstance.Core.documentViewer.getDocument().getPageCount();
         if (!pageNumber || pageNumber > numPages || !handler) {
@@ -152,6 +174,44 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
     onCancel = () => {
         this.props.wvInstance.UI.closeElements([this.props.dataElement]);
     };
+    onDownload = async () => {
+        const doc = this.props.wvInstance.Core.documentViewer.getDocument();
+        if (!doc) {
+            console.warn("No document is loaded. Unable to extract pages");
+        }
+        try {
+            this.props.wvInstance.UI.openElements(["loadingModal"]);
+            const pages = this.stringToPageArray(this.state.pageInput);
+            const extracted = await doc.extractPages(pages);
+            const downloadBlob = new Blob([extracted], { type: "application/pdf" });
+            const downloadUrl = URL.createObjectURL(downloadBlob);
+            this._downloadRef.current.href = downloadUrl;
+            this._downloadRef.current.download = doc
+                .getFilename()
+                .split(".")
+                .map((part, index, arr) => (index === arr.length - 1 ? "-extracted.pdf" : part))
+                .join(".");
+            this._downloadRef.current.click();
+            this.props.wvInstance.UI.closeElements([this.props.dataElement]);
+        } finally {
+            this.props.wvInstance.UI.closeElements(["loadingModal"]);
+        }
+    };
+    onSaveToMendix = async () => {
+        const doc = this.props.wvInstance.Core.documentViewer.getDocument();
+        if (!doc) {
+            console.warn("No document is loaded. Unable to extract pages");
+        }
+        try {
+            this.props.wvInstance.UI.openElements(["loadingModal"]);
+            const pages = this.stringToPageArray(this.state.pageInput);
+            const extracted = await doc.extractPages(pages);
+            await this.props.moduleClient.saveFile(extracted);
+            this.props.wvInstance.UI.closeElements([this.props.dataElement]);
+        } finally {
+            this.props.wvInstance.UI.closeElements(["loadingModal"]);
+        }
+    };
     render(): JSX.Element {
         return (
             <div className="Modal WarningModal">
@@ -186,13 +246,22 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                             render={this.loadThumbnail}
                             items={this.state.pageCount}
                         />
+                        <a ref={this._downloadRef} style={{ display: "hidden" }} />
                     </div>
                     <div className="footer">
                         <div className="Button cancel modal-button" onClick={this.onCancel}>
                             Cancel
                         </div>
-                        <div className="Button confirm modal-button">Download</div>
-                        <div className="Button confirm modal-button">Save to Mendix</div>
+                        {this.props.allowDownload ? (
+                            <div className="Button confirm modal-button" onClick={this.onDownload}>
+                                Download
+                            </div>
+                        ) : undefined}
+                        {this.props.allowSaveAs ? (
+                            <div className="Button confirm modal-button" onClick={this.onSaveToMendix}>
+                                Save to Mendix
+                            </div>
+                        ) : undefined}
                     </div>
                 </div>
             </div>

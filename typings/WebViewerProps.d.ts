@@ -6,7 +6,27 @@
 import { CSSProperties } from "react";
 import { ActionValue, DynamicValue, EditableValue, FileValue } from "mendix";
 
-export type DefaultLanguageEnum = "en" | "de" | "es" | "fr" | "it" | "el" | "ja" | "ko" | "nl" | "pt_br" | "ru" | "zh_cn" | "zh_tw" | "vi" | "uk" | "id" | "ms" | "bn" | "hi" | "tr";
+export type DefaultLanguageEnum =
+    | "en"
+    | "de"
+    | "es"
+    | "fr"
+    | "it"
+    | "el"
+    | "ja"
+    | "ko"
+    | "nl"
+    | "pt_br"
+    | "ru"
+    | "zh_cn"
+    | "zh_tw"
+    | "vi"
+    | "uk"
+    | "id"
+    | "ms"
+    | "bn"
+    | "hi"
+    | "tr";
 
 export interface WebViewerContainerProps {
     name: string;
@@ -17,9 +37,10 @@ export interface WebViewerContainerProps {
     file?: DynamicValue<FileValue>;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
-    allowPageExtraction: boolean;
     enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
+    enablePageExtraction: boolean;
+    allowExtractionDownload: boolean;
     enableFullAPI: boolean;
     annotationUser?: EditableValue<string>;
     enableAnnotations: boolean;
@@ -45,6 +66,7 @@ export interface WebViewerContainerProps {
     enableRealTimeAnnotating: boolean;
     onExportXfdfCommand?: ActionValue;
     autoXfdfCommandImportInterval: number;
+    allowSavingToMendix: boolean;
     l: string;
 }
 
@@ -61,9 +83,10 @@ export interface WebViewerPreviewProps {
     file: string;
     enableFilePicker: boolean;
     loadAsPDF: boolean;
-    allowPageExtraction: boolean;
     enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
+    enablePageExtraction: boolean;
+    allowExtractionDownload: boolean;
     enableFullAPI: boolean;
     annotationUser: string;
     enableAnnotations: boolean;
@@ -90,5 +113,6 @@ export interface WebViewerPreviewProps {
     enableRealTimeAnnotating: boolean;
     onExportXfdfCommand: {} | null;
     autoXfdfCommandImportInterval: number | null;
+    allowSavingToMendix: boolean;
     l: string;
 }
