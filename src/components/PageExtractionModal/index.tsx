@@ -34,6 +34,17 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             this.trigger(parsedInput);
         }, 1000);
     };
+    onClickThumbnail = (pageNumber: number, isSelected: boolean) => {
+        if (isSelected) {
+            this.setState({
+                pageInput: `${this.state.pageInput},${pageNumber}`
+            });
+        } else {
+            this.setState({
+                pageInput: this.parsePageInputString(this.state.pageInput.replace(`${pageNumber}`, ""))
+            });
+        }
+    };
     parsePageInputString = (input: string) => {
         if (!input) {
             return "1";
@@ -110,6 +121,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                 pageNumber={pageNumber}
                 addFileInputEventListener={this.subscribe}
                 removeFileInputEventListener={this.unsubscribe}
+                onClick={this.onClickThumbnail}
             />
         );
     };

@@ -5,6 +5,7 @@ interface PageExtractionThumbnailInputProps {
     pageNumber: number;
     addFileInputEventListener: any;
     removeFileInputEventListener: any;
+    onClick: any;
 }
 
 interface PageExtractionThumbnailState {
@@ -66,27 +67,42 @@ class PageExtractionThumbnail extends React.Component<PageExtractionThumbnailInp
         });
     };
     onHoverEnter = () => {
-        this.setState({
-            isHover: true
-        });
+        if (this.state.isDisabled) {
+            return;
+        }
+        this.setState({ isHover: true });
     };
     onHoverLeave = () => {
-        this.setState({
-            isHover: false
-        });
+        if (this.state.isDisabled) {
+            return;
+        }
+        this.setState({ isHover: false });
+    };
+    onClick = () => {
+        if (this.state.isDisabled) {
+            return;
+        }
+        this.props.onClick(this.props.pageNumber, !this.state.isSelected);
+        this.setState({ isSelected: !this.state.isSelected });
     };
     render(): JSX.Element {
         const { thumbnail, isHover, isSelected } = this.state;
         const listItemStyle = isHover ? ListItemHoverStyle : ListItemStyle;
         return (
-            // @ts-ignore
-            <div style={listItemStyle} onMouseEnter={this.onHoverEnter} onMouseLeave={this.onHoverLeave}>
+            <div
+                // @ts-ignore
+                style={listItemStyle}
+                onMouseEnter={this.onHoverEnter}
+                onMouseLeave={this.onHoverLeave}
+                onClick={this.onClick}
+            >
                 <img src={thumbnail} />
                 <input
                     type="checkbox"
                     style={{ position: "absolute", top: 0, left: 0 }}
                     disabled={this.state.isDisabled}
                     checked={isSelected}
+                    onClick={this.onClick}
                 />
             </div>
         );
