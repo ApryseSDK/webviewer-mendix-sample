@@ -15,6 +15,7 @@ interface PageExtractionModalInputProps {
 interface PageExtractionModalState {
     pageInput: string;
     pageCount: number[];
+    includeAnnotations: boolean;
 }
 
 class PageExtractionModal extends React.Component<PageExtractionModalInputProps, PageExtractionModalState> {
@@ -28,7 +29,8 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
         const doc = this.props.wvInstance.Core.documentViewer.getDocument();
         this.state = {
             pageInput: "1",
-            pageCount: doc ? Array.from({ length: doc.getPageCount() }, (_, index) => index + 1) : []
+            pageCount: doc ? Array.from({ length: doc.getPageCount() }, (_, index) => index + 1) : [],
+            includeAnnotations: true
         };
     }
     componentDidMount(): void {
@@ -171,6 +173,9 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             />
         );
     };
+    onToggleIncludeAnnotations = (e: any) => {
+        this.setState({ includeAnnotations: e.target.checked });
+    };
     onCancel = () => {
         this.props.wvInstance.UI.closeElements([this.props.dataElement]);
     };
@@ -182,7 +187,11 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
         try {
             this.props.wvInstance.UI.openElements(["loadingModal"]);
             const pages = this.stringToPageArray(this.state.pageInput);
-            const extracted = await doc.extractPages(pages);
+            let xfdf;
+            if (this.state.includeAnnotations) {
+                xfdf = await this.props.wvInstance.Core.annotationManager.exportAnnotations();
+            }
+            const extracted = await doc.extractPages(pages, xfdf);
             const downloadBlob = new Blob([extracted], { type: "application/pdf" });
             const downloadUrl = URL.createObjectURL(downloadBlob);
             this._downloadRef.current.href = downloadUrl;
@@ -205,7 +214,11 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
         try {
             this.props.wvInstance.UI.openElements(["loadingModal"]);
             const pages = this.stringToPageArray(this.state.pageInput);
-            const extracted = await doc.extractPages(pages);
+            let xfdf;
+            if (this.state.includeAnnotations) {
+                xfdf = await this.props.wvInstance.Core.annotationManager.exportAnnotations();
+            }
+            const extracted = await doc.extractPages(pages, xfdf);
             await this.props.moduleClient.saveFile(extracted);
             this.props.wvInstance.UI.closeElements([this.props.dataElement]);
         } finally {
@@ -227,7 +240,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                         }}
                     >
                         <div style={{ margin: "1em" }}>
-                            <span>Pages: </span>
+                            <span>Pages:</span>
                             <div style={{ display: "flex", flexDirection: "column", marginTop: "0.5em" }}>
                                 <input
                                     type="text"
@@ -246,6 +259,14 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                             render={this.loadThumbnail}
                             items={this.state.pageCount}
                         />
+                        <div style={{ display: "flex", flexDirection: "row", marginTop: "1em" }}>
+                            <span>Include annotations?</span>
+                            <input
+                                type="checkbox"
+                                onClick={this.onToggleIncludeAnnotations}
+                                checked={this.state.includeAnnotations}
+                            />
+                        </div>
                         <a ref={this._downloadRef} style={{ display: "hidden" }} />
                     </div>
                     <div className="footer">
