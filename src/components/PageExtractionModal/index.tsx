@@ -255,7 +255,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                         </div>
                         <VirtualList
                             height="400px"
-                            numItems={9}
+                            padding={13}
                             render={this.loadThumbnail}
                             items={this.state.pageCount}
                         />
