@@ -47,6 +47,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         };
     }
     componentDidMount(): void {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         this._resizeObserver.observe(this._measurementRef.current);
     }
@@ -56,7 +57,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         }
         this.props.parentRemoveEventListener("scroll", this.onParentScroll);
     }
-    onParentScroll = (parentRect: any, _scrollTop: number, padding: number) => {
+    onParentScroll = (parentRect: any, _scrollTop: number, padding: number): void => {
         clearTimeout(this._scrollHandle);
         this._scrollHandle = setTimeout(() => {
             const rect = this._containerRef.current?.getBoundingClientRect();
@@ -78,6 +79,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
 
         return verticalIntersection;
     };
+    // eslint-disable-next-line no-undef
     render(): JSX.Element {
         if (!this.state.shouldRenderItem) {
             return <></>;
@@ -89,7 +91,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: "0.5em 0px",
+                    padding: "0.5em 0px"
                     // DEBUGGING ONLY
                     // backgroundColor: this.state.isVisible ? "green" : "red"
                 }}
