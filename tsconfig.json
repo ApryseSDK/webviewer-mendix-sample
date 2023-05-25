@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsxFragmentFactory": "React.Fragment",
     "esModuleInterop": true,
     "jsx": "react"
   },

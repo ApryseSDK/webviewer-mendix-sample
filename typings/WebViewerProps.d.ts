@@ -39,6 +39,8 @@ export interface WebViewerContainerProps {
     loadAsPDF: boolean;
     enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
+    enablePageExtraction: boolean;
+    allowExtractionDownload: boolean;
     enableFullAPI: boolean;
     annotationUser?: EditableValue<string>;
     enableAnnotations: boolean;
@@ -64,6 +66,7 @@ export interface WebViewerContainerProps {
     enableRealTimeAnnotating: boolean;
     onExportXfdfCommand?: ActionValue;
     autoXfdfCommandImportInterval: number;
+    allowSavingToMendix: boolean;
     l: string;
 }
 
@@ -82,6 +85,8 @@ export interface WebViewerPreviewProps {
     loadAsPDF: boolean;
     enablePdfEditing: boolean;
     enableOfficeEditing: boolean;
+    enablePageExtraction: boolean;
+    allowExtractionDownload: boolean;
     enableFullAPI: boolean;
     annotationUser: string;
     enableAnnotations: boolean;
@@ -108,5 +113,6 @@ export interface WebViewerPreviewProps {
     enableRealTimeAnnotating: boolean;
     onExportXfdfCommand: {} | null;
     autoXfdfCommandImportInterval: number | null;
+    allowSavingToMendix: boolean;
     l: string;
 }

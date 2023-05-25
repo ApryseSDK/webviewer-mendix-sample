@@ -36,6 +36,16 @@
                     <description>Switches WebViewer to Office editing.</description>
                 </property>
             </propertyGroup>
+            <propertyGroup caption="Page Extraction">
+                <property key="enablePageExtraction" type="boolean" defaultValue="false">
+                    <caption>Enable page extraction</caption>
+                    <description>Enable page extraction so that users can select which pages they want to save to another file.</description>
+                </property>
+                <property key="allowExtractionDownload" type="boolean" defaultValue="false">
+                    <caption>Allow extraction download</caption>
+                    <description>Allow the extracted pages to be downloaded.</description>
+                </property>
+            </propertyGroup>
             <propertyGroup caption="Other">
                 <property key="enableFullAPI" type="boolean" defaultValue="false">
                     <caption>Enable full API</caption>
@@ -189,6 +199,12 @@
                 <property key="autoXfdfCommandImportInterval" type="integer" defaultValue="1000">
                     <caption>Auto Import Interval</caption>
                     <description>The interval in milliseconds to get XFDF updates from the server for the current file.</description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Page Extraction">
+                <property key="allowSavingToMendix" type="boolean" defaultValue="false">
+                    <caption>Allow saving to Mendix</caption>
+                    <description>Allow the extracted pages to be saved back to Mendix as a separate file.</description>
                 </property>
             </propertyGroup>
         </propertyGroup>

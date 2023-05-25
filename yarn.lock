@@ -1517,10 +1517,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
-"@pdftron/webviewer@^10.0.0-20230412":
-  "integrity" "sha512-PD9xqNmdXt87H3wJwBtGOG3oy1ZfXElyt7cpe0pTMb+w94EG/F57sfAblHjBrdmCCld4hxYGkb9VOFbOaoC/Rg=="
-  "resolved" "https://registry.npmjs.org/@pdftron/webviewer/-/webviewer-10.0.0.tgz"
-  "version" "10.0.0"
+"@pdftron/webviewer@^10.1.0-20230523":
+  "integrity" "sha512-ZGpVO02qfM9u/kAZpG5io6xHiwhz4IKWIsUYX+HgPbotaQpeLYJjZjUni/99UPQCMOVVkC2mNZcIlOlJWKK3UQ=="
+  "resolved" "https://registry.npmjs.org/@pdftron/webviewer/-/webviewer-10.1.0.tgz"
+  "version" "10.1.0"
 
 "@prettier/plugin-xml@^1.2.0":
   "integrity" "sha512-bFvVAZKs59XNmntYjyefn3K4TBykS6E+d6ZW8IcylAs88ZO+TzLhp0dPpi0VKfPzq1Nb+kpDnPRTiwb4zY6NgA=="
