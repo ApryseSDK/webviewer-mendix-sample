@@ -162,7 +162,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
             handlers.forEach(handler => handler(input))
         );
     };
-    loadThumbnail = (pageNumber: number) => {
+    renderThumbnail = (pageNumber: number) => {
         return (
             <PageExtractionThumbnail
                 wvInstance={this.props.wvInstance}
@@ -256,7 +256,7 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                         <VirtualList
                             height="400px"
                             padding={13}
-                            render={this.loadThumbnail}
+                            render={this.renderThumbnail}
                             items={this.state.pageCount}
                         />
                         <div style={{ display: "flex", flexDirection: "row", marginTop: "1em" }}>
