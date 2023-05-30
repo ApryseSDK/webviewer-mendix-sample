@@ -5,20 +5,23 @@ interface ListItemInputProps {
     render: any;
     parentAddEventListener: any;
     parentRemoveEventListener: any;
+    parentTrigger: any;
 }
 
 interface ListItemState {
     renderTarget: any;
     shouldRenderItem: boolean;
     isVisible: boolean;
+    height: number;
 }
 
+const DEFAULT_MAX_HEIGHT = 153;
+
 class ListItem extends React.Component<ListItemInputProps, ListItemState> {
-    private static MAX_SIZE = 0;
+    private static MAX_HEIGHT = DEFAULT_MAX_HEIGHT;
     private _containerRef: React.RefObject<HTMLDivElement>;
     private _measurementRef: React.RefObject<HTMLDivElement>;
     private _resizeObserver: ResizeObserver;
-    private _height = 0;
     private _scrollHandle: any;
     constructor(props: ListItemInputProps) {
         super(props);
@@ -26,14 +29,16 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         this._measurementRef = React.createRef();
         this._resizeObserver = new ResizeObserver(() => {
             const rect = this._measurementRef.current?.getBoundingClientRect();
-            if (!rect || rect.height === 0 || (this._height && rect.height < this._height)) {
+            if (!rect || rect.height === 0 || rect.height < ListItem.MAX_HEIGHT) {
                 return;
             }
-            this._height = rect.height;
-            if (this._height > ListItem.MAX_SIZE) {
-                ListItem.MAX_SIZE = this._height;
+            if (rect.height >= ListItem.MAX_HEIGHT) {
+                ListItem.MAX_HEIGHT = rect.height;
+                this.props.parentTrigger("maxHeightUpdate", rect.height);
             }
+            this.setState({ height: rect.height >= ListItem.MAX_HEIGHT ? rect.height : ListItem.MAX_HEIGHT });
         });
+        this.props.parentAddEventListener("maxHeightUpdate", this.onMaxHeightUpdate);
         this.props.parentAddEventListener("scroll", this.onParentScroll);
         const renderTarget = this.props.render(this.props.item);
         const isPromise = renderTarget instanceof Promise;
@@ -43,6 +48,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         this.state = {
             renderTarget: isPromise ? undefined : renderTarget,
             shouldRenderItem: !isPromise,
+            height: 0,
             isVisible: true
         };
     }
@@ -56,8 +62,14 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
             this._resizeObserver.unobserve(this._measurementRef.current);
         }
         this.props.parentRemoveEventListener("scroll", this.onParentScroll);
+        ListItem.MAX_HEIGHT = DEFAULT_MAX_HEIGHT;
     }
-    onParentScroll = (parentRect: any, _scrollTop: number, padding: number): void => {
+    onMaxHeightUpdate = (maxHeight: number) => {
+        if (!this.state.isVisible && this.state.height < maxHeight) {
+            this.setState({ height: maxHeight });
+        }
+    };
+    onParentScroll = (parentRect: any, _scrollTop: number, padding: number) => {
         clearTimeout(this._scrollHandle);
         this._scrollHandle = setTimeout(() => {
             const rect = this._containerRef.current?.getBoundingClientRect();
@@ -69,7 +81,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         }, 100);
     };
     doRectanglesIntersect = (rect1: any, rect2: any, padding = 13): boolean => {
-        const itemPadding = ListItem.MAX_SIZE * padding;
+        const itemPadding = ListItem.MAX_HEIGHT * padding;
         const rect1Top = rect1.y - itemPadding;
         const rect1Bottom = rect1.y + rect1.height + itemPadding;
         const rect2Top = rect2.y;
@@ -86,6 +98,7 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
         }
         return (
             <div
+                key={this.props.item}
                 ref={this._containerRef}
                 style={{
                     display: "flex",
@@ -93,19 +106,28 @@ class ListItem extends React.Component<ListItemInputProps, ListItemState> {
                     justifyContent: "center",
                     padding: "0.5em 0px"
                     // DEBUGGING ONLY
-                    // backgroundColor: this.state.isVisible ? "green" : "red"
+                    // ,backgroundColor: this.state.isVisible ? "green" : "red"
                 }}
             >
                 <div ref={this._measurementRef}>
-                    {this.state.isVisible ? (
-                        this.state.renderTarget
-                    ) : (
-                        <div
-                            style={{
-                                height: `${ListItem.MAX_SIZE < this._height ? this._height : ListItem.MAX_SIZE}px`
-                            }}
-                        ></div>
-                    )}
+                    <div
+                        style={{
+                            display: this.state.isVisible ? undefined : "none",
+                            height: `${
+                                ListItem.MAX_HEIGHT < this.state.height ? this.state.height : ListItem.MAX_HEIGHT
+                            }px`
+                        }}
+                    >
+                        {this.state.renderTarget}
+                    </div>
+                    <div
+                        style={{
+                            display: !this.state.isVisible ? undefined : "none",
+                            height: `${
+                                ListItem.MAX_HEIGHT < this.state.height ? this.state.height : ListItem.MAX_HEIGHT
+                            }px`
+                        }}
+                    ></div>
                 </div>
             </div>
         );

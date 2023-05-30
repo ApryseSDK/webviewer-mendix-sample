@@ -73,6 +73,7 @@ class VirtualList extends React.Component<VirtualListInputProps> {
                         render={this.props.render}
                         parentAddEventListener={this.addEventListener}
                         parentRemoveEventListener={this.removeEventListener}
+                        parentTrigger={this.trigger}
                     />
                 ))}
             </div>
