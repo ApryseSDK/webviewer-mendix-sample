@@ -72,9 +72,9 @@ class PageExtractionModal extends React.Component<PageExtractionModalInputProps,
                 pageInput: `${this.state.pageInput},${pageNumber}`
             });
         } else {
-            this.setState({
-                pageInput: this.parsePageInputString(this.state.pageInput.replace(`${pageNumber}`, ""))
-            });
+            const parsedInput = this.parsePageInputString(this.state.pageInput.replace(`${pageNumber}`, ""));
+            this.setState({ pageInput: parsedInput });
+            this.trigger(parsedInput);
         }
     };
     parsePageInputString = (input: string) => {

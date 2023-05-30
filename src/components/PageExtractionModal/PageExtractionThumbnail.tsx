@@ -87,8 +87,8 @@ class PageExtractionThumbnail extends React.Component<PageExtractionThumbnailInp
         if (this.state.isDisabled) {
             return;
         }
-        this.props.onClick(this.props.pageNumber, !this.state.isSelected);
         this.setState({ isSelected: !this.state.isSelected });
+        this.props.onClick(this.props.pageNumber, !this.state.isSelected);
     };
     render(): JSX.Element {
         const { thumbnail, isHover, isSelected } = this.state;
@@ -106,6 +106,7 @@ class PageExtractionThumbnail extends React.Component<PageExtractionThumbnailInp
                     type="checkbox"
                     style={{ position: "absolute", top: 0, left: 0 }}
                     disabled={this.state.isDisabled}
+                    defaultChecked={isSelected}
                     checked={isSelected}
                     onClick={this.onClick}
                 />
