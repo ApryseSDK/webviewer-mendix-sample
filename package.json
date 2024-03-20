@@ -1,7 +1,7 @@
 {
   "name": "webviewer",
   "widgetName": "WebViewer",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "My widget description",
   "copyright": "2024 Apryse",
   "author": "Andrey Safonov",
